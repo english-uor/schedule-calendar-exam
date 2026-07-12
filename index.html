@@ -26,7 +26,7 @@
         }
     </script>
 
-    <!-- External Libraries: Icons, PDF, Canvas -->
+    <!-- External Libraries -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -35,9 +35,9 @@
         body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
         ::-webkit-scrollbar { width: 0px; height: 0px; background: transparent; }
         
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; background: rgba(0,0,0,0.05); }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
-        .dark .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; background: rgba(0,0,0,0.05); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.3); border-radius: 10px; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); }
 
         .active-pill { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35); color: white !important; border-color: transparent !important; }
 
@@ -51,31 +51,45 @@
         .led-border-inner { position: relative; z-index: 1; margin: 3px; }
         @keyframes rotateLED { 100% { transform: rotate(360deg); } }
 
-        /* Grid Styles & Thick Borders */
-        .timetable-container { border-radius: 1rem; overflow-x: auto;}
-        .timetable { width: 100%; min-width: 800px; border-collapse: collapse; background: white; }
-        .dark .timetable { background: #0f172a; }
-        /* Make borders thick for easier diagnostic */
-        .timetable th, .timetable td { border: 3px solid #64748b !important; padding: 0.5rem; vertical-align: middle; }
-        .dark .timetable th, .dark .timetable td { border: 3px solid #334155 !important; }
+        /* Official Grid & Clean Column Spacings */
+        .timetable-container { border-radius: 0.75rem; border: 4px solid #0f172a; overflow-x: auto; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); background: white; }
+        .dark .timetable-container { border: 4px solid #475569; background: #0f172a; }
+        .timetable { width: 100%; border-collapse: collapse; table-layout: auto; }
+        .timetable th, .timetable td { border: 2px solid #94a3b8 !important; padding: 0.75rem; vertical-align: middle; }
+        .dark .timetable th, .dark .timetable td { border: 2px solid #334155 !important; }
         .timetable th { position: sticky; top: 0; z-index: 10; font-weight: 800; }
         
-        /* Fix html2canvas vertical text rotation */
-        .vertical-text-container { display: flex; align-items: center; justify-content: center; width: 40px; height: 100%; min-height: 120px; margin: 0 auto; }
-        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-weight: 900; letter-spacing: 1px; }
+        /* Stronger structural borders */
+        .timetable thead th { border-bottom: 4px solid #0f172a !important; }
+        .dark .timetable thead th { border-bottom: 4px solid #475569 !important; }
+        .timetable .day-end td { border-bottom: 4px solid #0f172a !important; }
+        .dark .timetable .day-end td { border-bottom: 4px solid #475569 !important; }
+        .timetable .stage-end { border-right: 4px solid #0f172a !important; }
+        .dark .timetable .stage-end { border-right: 4px solid #475569 !important; }
+
+        .vertical-text { display: inline-block; transform: rotate(-90deg); transform-origin: center center; white-space: nowrap; text-align: center; }
         
         .loader { border: 3px solid rgba(59, 130, 246, 0.3); border-radius: 50%; border-top: 3px solid #3b82f6; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Print/Export overrides */
-        .exporting #export-wrapper { padding: 40px !important; background-color: #ffffff !important; border-radius: 0; box-sizing: border-box !important; }
-        .exporting .timetable-container { overflow-x: visible !important; border: none !important; }
-        .exporting .admin-edit-btn { display: none !important; }
-        .exporting .timetable th, .exporting .timetable td { border: 3px solid #000 !important; color: #000 !important; }
-        .exporting .vertical-text { color: #000 !important; }
-        .exporting #doc-title-header { display: block !important; margin-bottom: 24px !important; font-size: 1.25rem !important; color: #000 !important; }
-        .editable-title { cursor: pointer; border: 1px dashed transparent; padding: 4px; border-radius: 4px; transition: 0.3s; }
-        body.admin-mode .editable-title:hover { border-color: #3b82f6; background-color: rgba(59,130,246,0.05); }
+        /* Premium Export Specific Overrides */
+        .export-layout-wrapper {
+            padding: 56px !important; /* EXACTLY 1.5cm margins all around */
+            background: white !important;
+            color: #0f172a !important;
+            border-radius: 0px !important;
+        }
+        .dark .export-layout-wrapper {
+            background: #0f172a !important;
+            color: white !important;
+        }
+        
+        /* Excel-like focus styles */
+        td[contenteditable="true"] { cursor: text; outline: none; transition: all 0.2s ease; }
+        td[contenteditable="true"]:focus { background-color: #fff !important; box-shadow: inset 0 0 0 3px #3b82f6; z-index: 50; position: relative; color: #0f172a !important; }
+        .dark td[contenteditable="true"]:focus { background-color: #1e293b !important; color: white !important; }
+
+        .admin-mode .admin-only { display: flex !important; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased select-none overflow-x-hidden relative pb-10 transition-colors duration-500">
@@ -86,7 +100,7 @@
     </div>
 
     <header class="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 transition-colors duration-500">
-        <div class="px-4 py-3.5 flex justify-between items-center max-w-4xl mx-auto w-full">
+        <div class="px-4 py-3.5 flex justify-between items-center max-w-5xl mx-auto w-full">
             <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 transition-all shadow-sm">
                 <i data-lucide="languages" class="w-4 h-4 mr-1.5 ltr-mr"></i><span id="lang-text">EN</span>
             </button>
@@ -100,9 +114,10 @@
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-5xl mx-auto px-4 pt-6 flex flex-col gap-6">
+    <main class="flex-grow w-full max-w-[1400px] mx-auto px-2 sm:px-4 pt-6 flex flex-col gap-6">
 
-        <section id="announcement-hero" class="w-full max-w-2xl mx-auto relative z-10 hidden">
+        <!-- Announcement Hero -->
+        <section id="announcement-hero" class="w-full max-w-3xl mx-auto relative z-10 hidden">
             <div class="led-border-window rounded-[2rem] bg-white/80 dark:bg-slate-950/80 p-[3px] shadow-xl dark:shadow-[0_0_40px_rgba(59,130,246,0.15)] transition-colors duration-500">
                 <div class="led-border-inner rounded-[1.85rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-3xl p-5 sm:p-6 flex flex-col gap-3 transition-colors duration-500">
                     <div class="flex items-center justify-between">
@@ -110,63 +125,78 @@
                             <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                             <span data-i18n="latest_news">نوێترین ئاگاداری</span>
                         </div>
-                        <i data-lucide="bell-ring" class="w-5 h-5 text-brand-500"></i>
+                        <i data-lucide="bell-ring" class="w-5 h-5 text-brand-500 animate-bounce"></i>
                     </div>
                     <div class="mt-1">
-                        <h2 id="hero-title" class="text-base sm:text-lg font-black font-kurdish text-slate-900 dark:text-white leading-snug">...</h2>
+                        <h2 id="hero-title" class="text-lg sm:text-xl font-black font-kurdish text-slate-900 dark:text-white leading-snug break-words">...</h2>
                         <p id="hero-desc" class="text-sm text-slate-600 dark:text-slate-400 mt-2 font-kurdish leading-relaxed">...</p>
-                        <div class="flex items-center justify-end gap-2 mt-3 text-slate-500 text-xs font-bold"><span id="hero-date">...</span><i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i></div>
+                        <div class="flex items-center justify-between mt-4">
+                            <span id="hero-status" class="px-2 py-0.5 text-xs font-bold rounded bg-slate-100 text-slate-600">Active</span>
+                            <div class="flex items-center gap-2 text-slate-500 text-xs font-bold"><span id="hero-date">...</span><i data-lucide="calendar-clock" class="w-4 h-4"></i></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="max-w-3xl mx-auto w-full grid grid-cols-4 p-1.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm transition-colors duration-500">
-            <button onclick="switchTab('Schedules')" id="tab-Schedules" class="active-pill py-2.5 text-center text-[10px] sm:text-xs font-bold font-kurdish rounded-xl transition-all duration-300">
-                <i data-lucide="layout-grid" class="w-4 h-4 mx-auto mb-1"></i><span data-i18n="schedules">خشتەکان</span>
+        <!-- Main Tab Controllers -->
+        <section class="max-w-4xl mx-auto w-full grid grid-cols-4 p-1.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm transition-colors duration-500">
+            <button onclick="switchTab('Schedules')" id="tab-Schedules" class="active-pill py-3 text-center text-[10px] sm:text-sm font-bold font-kurdish rounded-xl transition-all duration-300 flex flex-col items-center justify-center">
+                <i data-lucide="layout-grid" class="w-5 h-5 mb-1"></i><span data-i18n="schedules">خشتەکان</span>
             </button>
-            <button onclick="switchTab('Exams')" id="tab-Exams" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-2.5 text-center text-[10px] sm:text-xs font-bold font-kurdish rounded-xl transition-all duration-300">
-                <i data-lucide="file-edit" class="w-4 h-4 mx-auto mb-1"></i><span data-i18n="exams">تاقیکردنەوە</span>
+            <button onclick="switchTab('Exams')" id="tab-Exams" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-3 text-center text-[10px] sm:text-sm font-bold font-kurdish rounded-xl transition-all duration-300 flex flex-col items-center justify-center">
+                <i data-lucide="file-edit" class="w-5 h-5 mb-1"></i><span data-i18n="exams">تاقیکردنەوە</span>
             </button>
-            <button onclick="switchTab('Calendar')" id="tab-Calendar" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-2.5 text-center text-[10px] sm:text-xs font-bold font-kurdish rounded-xl transition-all duration-300">
-                <i data-lucide="calendar" class="w-4 h-4 mx-auto mb-1"></i><span data-i18n="calendar">ڕۆژژمێر</span>
+            <button onclick="switchTab('Calendar')" id="tab-Calendar" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-3 text-center text-[10px] sm:text-sm font-bold font-kurdish rounded-xl transition-all duration-300 flex flex-col items-center justify-center">
+                <i data-lucide="calendar" class="w-5 h-5 mb-1"></i><span data-i18n="calendar">ڕۆژژمێر</span>
             </button>
-            <button onclick="switchTab('Announcements')" id="tab-Announcements" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-2.5 text-center text-[10px] sm:text-xs font-bold font-kurdish rounded-xl transition-all duration-300">
-                <i data-lucide="megaphone" class="w-4 h-4 mx-auto mb-1"></i><span data-i18n="announcements">ئاگاداری</span>
+            <button onclick="switchTab('Announcements')" id="tab-Announcements" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-3 text-center text-[10px] sm:text-sm font-bold font-kurdish rounded-xl transition-all duration-300 flex flex-col items-center justify-center">
+                <i data-lucide="megaphone" class="w-5 h-5 mb-1"></i><span data-i18n="announcements">ئاگاداری</span>
             </button>
         </section>
 
-        <section id="filter-section" class="flex flex-col gap-3 max-w-4xl mx-auto w-full">
-            <div class="flex gap-3">
+        <section id="filter-section" class="flex flex-col gap-3 max-w-5xl mx-auto w-full">
+            <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative group flex-grow">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl-icon">
                         <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
                     </div>
-                    <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="گەڕان..." class="block w-full pr-4 pl-12 py-3 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-brand-500/50 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white font-kurdish rtl-input" onkeyup="renderData()">
+                    <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="گەڕان..." class="block w-full pr-4 pl-12 py-3.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-brand-500/50 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white font-kurdish rtl-input" onkeyup="renderData()">
                 </div>
-                <!-- Dynamic Dropdown Filter -->
-                <select id="filter-teacher" onchange="renderData()" class="block w-1/3 px-3 py-3 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
-                    <option value="" id="filter-teacher-label">All Teachers & Subjects</option>
+                
+                <!-- Premium Color Mode Selector (Dual Option Toggle) -->
+                <div class="flex items-center bg-white/70 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 rounded-xl px-3 py-1.5 gap-2">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider font-kurdish">شێوازی ڕەنگ (Color Mode)</span>
+                    <select id="color-style-option" onchange="renderData()" class="bg-transparent text-xs font-bold font-kurdish outline-none text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <option value="colorful">ڕەنگاوڕەنگ (Colorful Mode)</option>
+                        <option value="official">فەرمی (Official Academic)</option>
+                    </select>
+                </div>
+
+                <select id="filter-teacher" onchange="renderData()" class="block w-full sm:w-1/4 px-3 py-3.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
+                    <option value="" data-i18n="all_teachers">All Teachers</option>
+                </select>
+                <select id="filter-subject" onchange="renderData()" class="block w-full sm:w-1/4 px-3 py-3.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
+                    <option value="" data-i18n="all_subjects">All Subjects</option>
                 </select>
             </div>
 
-            <!-- Pill Filters -->
-            <div id="pill-filters-container" class="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl p-3 md:p-4 flex flex-col gap-3 transition-all duration-300">
+            <!-- Pill filters mapping -->
+            <div id="pill-filters-container" class="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl p-3 md:p-4 flex flex-col gap-3">
                 <div id="row-day" class="flex items-start sm:items-center gap-2 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">DAY</span>
                     <div id="day-pills" class="flex flex-wrap gap-2"></div>
                 </div>
-                <div id="filter-divider" class="w-full h-px bg-slate-200 dark:bg-slate-700"></div>
+                <div class="w-full h-px bg-slate-200 dark:bg-slate-700" id="filter-divider"></div>
                 <div id="row-stage" class="flex items-start sm:items-center gap-2 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">STAGE</span>
                     <div id="stage-pills" class="flex flex-wrap gap-2"></div>
                     
-                    <div id="row-group-container" class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center ml-2 sm:ml-6 rtl-ml">GROUP</span>
+                    <div id="group-filter-wrap" class="flex items-center gap-2 flex-wrap ml-2 sm:ml-6 rtl-ml">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">GROUP</span>
                         <div id="group-pills" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
-                <!-- Semester Filter specifically for Calendar -->
                 <div id="row-semester" class="hidden items-start sm:items-center gap-2 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">SEMESTER</span>
                     <div id="semester-pills" class="flex flex-wrap gap-2"></div>
@@ -174,108 +204,243 @@
             </div>
         </section>
 
+        <!-- Loader -->
         <div id="loading-indicator" class="py-12 flex flex-col items-center justify-center">
             <div class="loader mb-4"></div><p class="text-sm font-kurdish text-slate-500 font-bold" data-i18n="loading">چاوەڕێ بن...</p>
         </div>
 
-        <!-- Exportable Wrapper with padding for whitespace around tables -->
-        <div id="export-wrapper" class="w-full transition-all duration-300 rounded-2xl">
-            <!-- Dynamic Document Title (Editable by Admin) -->
-            <h2 id="doc-title-header" class="editable-title text-center font-bold text-slate-800 dark:text-slate-200 text-sm mb-4 hidden px-4 py-2 mx-auto" onclick="editTitle(this)" title="Click to edit if Admin"></h2>
-            <section id="grid-render-target" class="w-full overflow-hidden animate-card hidden bg-white dark:bg-[#0f172a] p-2 rounded-2xl"></section>
-        </div>
+        <section id="grid-render-target" class="w-full overflow-hidden animate-card hidden bg-white dark:bg-[#050B14] p-1 sm:p-2 rounded-2xl"></section>
         
-        <section id="data-render-target" class="flex flex-col gap-4 max-w-2xl mx-auto w-full hidden"></section>
+        <section id="data-render-target" class="flex flex-col gap-4 max-w-3xl mx-auto w-full hidden"></section>
 
-        <!-- Export Buttons -->
-        <div id="export-controls" class="hidden flex flex-wrap gap-3 justify-center mt-2 max-w-4xl mx-auto w-full animate-card pb-10">
+        <!-- Action controllers for exporting -->
+        <div id="export-controls" class="hidden flex flex-wrap gap-3 justify-center mt-2 max-w-4xl mx-auto w-full animate-card font-kurdish font-bold">
+            <button onclick="exportGrid('png')" class="flex items-center gap-2 px-5 py-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold text-sm rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-200 dark:border-indigo-800 shadow-sm"><i data-lucide="image" class="w-5 h-5"></i> Download Full PNG</button>
+            <button onclick="exportGrid('pdf')" class="flex items-center gap-2 px-5 py-3 bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 font-bold text-sm rounded-xl hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800 shadow-sm"><i data-lucide="file-text" class="w-5 h-5"></i> Download Full PDF</button>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 mb-6 relative flex flex-col items-center gap-4 z-40">
+        <button onclick="openAdminLogin()" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-bold hover:bg-slate-300/50 transition-colors">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i><span data-i18n="admin_panel">بەشی بەڕێوەبەر</span>
         </button>
     </footer>
 
-    <!-- Admin Login -->
-    <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 hidden flex-col items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-slate-200 dark:border-slate-700">
-            <h3 class="font-bold text-lg mb-4 text-center">Admin Login</h3>
-            <input type="password" id="admin-pass" placeholder="Password (admin123)" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-4 py-2.5 mb-4 text-center">
+    <!-- FAB for Multi-Channel Broadcast -->
+    <button onclick="openAdminSendModal()" id="admin-actions-btn" class="hidden admin-only fixed bottom-6 right-6 z-50 bg-brand-600 text-white p-4 rounded-full shadow-2xl hover:bg-brand-700 hover:scale-105 transition-all items-center justify-center">
+        <i data-lucide="send" class="w-6 h-6"></i>
+    </button>
+
+    <!-- Admin Authentication Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 transition-opacity">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 w-full max-w-xs shadow-2xl border border-slate-200 dark:border-slate-700">
+            <h3 class="font-black text-xl mb-6 text-center flex items-center justify-center gap-2 text-slate-800 dark:text-white"><i data-lucide="lock" class="w-5 h-5"></i> Admin Access</h3>
+            <input type="password" id="admin-pass" value="English2026@" placeholder="Password" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl px-4 py-3 mb-6 text-center font-bold tracking-widest outline-none focus:border-brand-500">
             <div class="flex gap-3">
-                <button onclick="closeAdminLogin()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
-                <button onclick="verifyAdmin()" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm">Login</button>
+                <button onclick="closeAdminLogin()" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="verifyAdmin()" class="flex-1 py-3 rounded-xl bg-brand-600 text-white font-bold text-sm">Login</button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-4">
+    <!-- Broadcaster Configuration Modal -->
+    <div id="admin-send-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh] overflow-y-auto custom-scroll">
+            <h3 class="font-black text-xl mb-4 flex items-center gap-2 text-slate-900 dark:text-white"><i data-lucide="send" class="w-6 h-6 text-brand-500"></i> Broadcast Notice</h3>
+            
+            <div class="space-y-4 text-right" dir="rtl">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">بۆ کێ دەنێردرێت؟ (Target Audience)</label>
+                    <select id="send-target" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold">
+                        <option value="All">All Students & Teachers</option>
+                        <option value="Teachers">All Teachers</option>
+                        <option value="Stage 1">Stage 1</option>
+                        <option value="Stage 2">Stage 2</option>
+                        <option value="Stage 3">Stage 3</option>
+                        <option value="Stage 4">Stage 4</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">ڕێگای ناردن (Send via)</label>
+                    <select id="send-via" onchange="toggleTelegramTokenField()" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold">
+                        <option value="Email">Email (ناردنی ئیمەیڵ)</option>
+                        <option value="Telegram">Telegram Bot (ناردنی تێلیگرام)</option>
+                    </select>
+                </div>
+
+                <div id="telegram-token-container" class="hidden">
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">Telegram Bot Token (BotFather)</label>
+                    <input type="text" id="telegram-bot-token" placeholder="Paste HTTP API Token..." class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-xs outline-none font-bold">
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">بابەت (Subject / Header)</label>
+                    <input type="text" id="send-subject" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold" value="Department Update...">
+                </div>
+                
+                <div>
+                    <label class="text-xs font-bold text-slate-500 mb-1 block">ناوەڕۆکی پەیام (Message Content)</label>
+                    <textarea id="send-message" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none resize-none font-kurdish font-bold" placeholder="Write your announcement..."></textarea>
+                </div>
+                
+                <div class="flex items-center gap-3 bg-brand-50 dark:bg-brand-900/30 p-4 rounded-xl border border-brand-100 dark:border-brand-800 cursor-pointer" onclick="toggleAttachmentState()">
+                    <input type="checkbox" id="send-attach" class="w-5 h-5 accent-brand-600 rounded pointer-events-none">
+                    <label class="text-sm font-bold text-brand-700 dark:text-brand-300 pointer-events-none">پاشکۆکردنی خشتە و تاقیکردنەوەکان وەک پاشکۆ</label>
+                </div>
+
+                <!-- LIVE PREVIEW CONTAINER -->
+                <div id="broadcast-preview-container" class="hidden flex-col gap-2 mt-2 bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border dark:border-slate-700 text-center">
+                    <span class="text-xs font-bold text-slate-500">Live Attachment Preview (پێشبینی پاشکۆ پێش ناردن)</span>
+                    <div id="broadcast-preview-loader" class="loader mx-auto my-3 hidden"></div>
+                    <img id="broadcast-preview-image" src="" alt="Live Attachment View" class="rounded-lg shadow-md max-h-[160px] object-contain mx-auto border bg-white dark:bg-slate-900">
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeAdminSendModal()" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="executeAdminSend()" id="exec-send-btn" class="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm flex justify-center items-center gap-2 transition-colors"><i data-lucide="send" class="w-4 h-4"></i> Send Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="title-edit-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col">
+            <h3 class="font-black text-lg mb-1 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-brand-500"></i> Edit Export Title</h3>
+            <p class="text-xs text-slate-500 mb-4">Uses dashes (-) or pipes (|) to format into one beautiful line on export.</p>
+            <textarea id="title-edit-textarea" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none mb-4 font-bold leading-relaxed"></textarea>
+            <div class="flex gap-3">
+                <button onclick="closeTitleEdit()" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="saveTitleEdit()" id="title-save-btn" class="flex-1 py-3 rounded-xl bg-green-600 text-white font-bold text-sm flex justify-center items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Edit Record modal (Schedule/Announcement/Calendar values) -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
-            <h3 class="font-bold text-lg mb-1 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-brand-500"></i> Edit Record</h3>
+            <h3 class="font-black text-lg mb-1 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-brand-500"></i> Edit Record</h3>
             <p class="text-xs text-slate-500 mb-4 font-mono" id="edit-meta"></p>
-            <div id="dynamic-edit-fields" class="flex flex-col gap-3 mb-4 overflow-y-auto px-1 py-2 custom-scroll flex-grow"></div>
-            <div class="flex gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <button onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
-                <button onclick="saveRowEdit()" id="save-btn" class="flex-1 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm flex justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
+            <div id="dynamic-edit-fields" class="flex flex-col gap-4 mb-4 overflow-y-auto px-1 py-2 custom-scroll flex-grow"></div>
+            <div class="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="closeEditModal()" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="saveRowEdit()" id="save-btn" class="flex-1 py-3 rounded-xl bg-green-600 text-white font-bold text-sm flex justify-center items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 opacity-0 translate-y-10 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-full shadow-2xl font-bold text-sm">
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 opacity-0 translate-y-10 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm pointer-events-none">
         <i data-lucide="check-circle-2" class="w-5 h-5" id="toast-icon"></i><span id="toast-msg">Success</span>
     </div>
 
 <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzok2ZaUVT0u2EdT6P8SlWPU_VKb8trgCPHiUJ0uquJ5D6g9sOpGYXXvXymkRmiSScijw/exec"; 
+    // Config and Global State management 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwkPXZerZ0Ipil5Y_SfUle0poZ00LttqjFBpeUblligyBlvaetwrU3HzIEvSmyzhqWAxA/exec"; 
 
     let state = {
         lang: 'ku', activeTab: 'Schedules', isAdmin: false,
         data: { Schedules: [], Exams: [], Calendar: [], Announcements: [] },
-        sheetNames: {}, editContext: null, docTitles: {},
+        sheetNames: {}, editContext: null,
+        titles: { schedule: '', exam: '', calendar: '' },
         filters: { day: null, stage: null, group: null, semester: null }
     };
 
     const dict = {
-        ku: { title: "بەڕێوەبردنی زانکۆ", subtitle: "خشتە و تاقیکردنەوەکان", schedules: "خشتەکان", exams: "تاقیکردنەوە", calendar: "ڕۆژژمێر", announcements: "ئاگاداری", all_teachers: "هەموو مامۆستاکان", all_subjects: "هەموو بابەتەکان", filter_table: "پاڵاوتنی خشتەکە", loading: "چاوەڕێ بن..." },
-        en: { title: "Uni Management", subtitle: "Schedules & Exams", schedules: "Schedules", exams: "Exams", calendar: "Calendar", announcements: "News", all_teachers: "All Teachers & Subjects", all_subjects: "All Subjects", filter_table: "Filter the table", loading: "Loading data..." }
+        ku: { title: "بەڕێوەبردنی زانکۆ", subtitle: "خشتە و تاقیکردنەوەکان", schedules: "خشتەکان", exams: "تاقیکردنەوە", calendar: "ڕۆژژمێر", announcements: "ئاگاداری", all_teachers: "هەموو مامۆستاکان", all_subjects: "هەموو بابەتەکان", loading: "چاوەڕێ بن..." },
+        en: { title: "Uni Management", subtitle: "Schedules & Exams", schedules: "Schedules", exams: "Exams", calendar: "Calendar", announcements: "News", all_teachers: "All Teachers", all_subjects: "All Subjects", loading: "Loading data..." }
     };
 
-    document.addEventListener('DOMContentLoaded', () => { applyLocalization(); lucide.createIcons(); fetchData(); });
+    document.addEventListener('DOMContentLoaded', () => { 
+        applyLocalization(); 
+        lucide.createIcons(); 
+        fetchData(); 
+        setupPasteHandler();
+        
+        // Load stored telegram token to prevent repeating tasks
+        const savedToken = localStorage.getItem('telegram_bot_token');
+        if (savedToken) {
+            document.getElementById('telegram-bot-token').value = savedToken;
+        }
+    });
 
     async function fetchData() {
         const cached = localStorage.getItem('uni_data_cache');
         if (cached) {
-            try { const parsed = JSON.parse(cached); state.data = parsed.data; state.sheetNames = parsed.sheetNames; if(parsed.docTitles) state.docTitles = parsed.docTitles; populateFilters(); renderData(); } catch(e) {}
+            try { 
+                const parsed = JSON.parse(cached); 
+                state.data = parsed.data; 
+                state.sheetNames = parsed.sheetNames; 
+                state.titles = parsed.titles || state.titles; 
+                populateFilters(); 
+                renderData(); 
+                updateHeroAnnouncement(); 
+            } catch(e) {}
         } else { document.getElementById('loading-indicator').classList.remove('hidden'); }
         
         try {
-            // Append timestamp to bypass browser cache and get immediate sheet updates
-            const res = await fetch(`${GAS_URL}?action=getAllData&t=${new Date().getTime()}`);
+            const res = await fetch(`${GAS_URL}?action=getAllData`);
             const json = await res.json();
             if(json.error) throw new Error(json.error);
             state.data = { Schedules: json.schedules||[], Exams: json.exams||[], Calendar: json.calendar||[], Announcements: json.announcements||[] };
             state.sheetNames = json.sheetNames || {};
-            state.docTitles = json.docTitles || state.docTitles;
-            localStorage.setItem('uni_data_cache', JSON.stringify({data: state.data, sheetNames: state.sheetNames, docTitles: state.docTitles}));
-            
-            populateFilters(); renderData();
-        } catch (err) { console.error(err); showToast('Failed to load data', 'x-circle', 'red'); } 
+            state.titles = json.titles || state.titles;
+            localStorage.setItem('uni_data_cache', JSON.stringify({data: state.data, sheetNames: state.sheetNames, titles: state.titles}));
+            populateFilters(); 
+            renderData(); 
+            updateHeroAnnouncement();
+        } catch (err) { showToast('Data loaded from Cache/Failed to sync', 'alert-circle', 'red'); } 
         finally { document.getElementById('loading-indicator').classList.add('hidden'); }
     }
 
-    function editTitle(element) {
-        if(!state.isAdmin) return;
-        const currentTitle = element.innerText;
-        const newTitle = prompt("Edit Document Title:", currentTitle);
-        if (newTitle && newTitle.trim() !== "" && newTitle !== currentTitle) {
-            element.innerText = newTitle;
-            state.docTitles[state.activeTab] = newTitle;
-            showToast("Saving title...", "loader", "brand");
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTitle', tab: state.activeTab, title: newTitle }) })
-                .then(() => { showToast("Title Saved!", "check", "green"); fetchData(); });
+    // Resolves unique colors for distinct subjects
+    const paletteColors = ['bg-[#cffafe] dark:bg-cyan-950 text-cyan-950 dark:text-cyan-50 border-cyan-200 dark:border-cyan-800', 'bg-[#fef08a] dark:bg-yellow-950 text-yellow-950 dark:text-yellow-50 border-yellow-200 dark:border-yellow-800', 'bg-[#fed7aa] dark:bg-orange-950 text-orange-950 dark:text-orange-50 border-orange-200 dark:border-orange-800', 'bg-[#e9d5ff] dark:bg-purple-950 text-purple-950 dark:text-purple-50 border-purple-200 dark:border-purple-800', 'bg-[#bbf7d0] dark:bg-emerald-950 text-emerald-950 dark:text-emerald-50 border-emerald-200 dark:border-emerald-800', 'bg-[#fbcfe8] dark:bg-pink-950 text-pink-950 dark:text-pink-50 border-pink-200 dark:border-pink-800', 'bg-[#e0e7ff] dark:bg-indigo-950 text-indigo-950 dark:text-indigo-50 border-indigo-200 dark:border-indigo-800', 'bg-[#fecaca] dark:bg-rose-950 text-rose-950 dark:text-rose-50 border-rose-200 dark:border-rose-800'];
+    let subjectColorCache = {};
+    let cacheCounter = 0;
+
+    function getOptionSubjectColor(subjectText, isTeacherCell = false) {
+        if (!subjectText || subjectText === '-' || subjectText.trim() === "") {
+            return "bg-transparent text-slate-400 dark:text-slate-500";
         }
+        
+        const mode = document.getElementById('color-style-option').value;
+        const txt = subjectText.trim();
+        
+        // OPTION 2: Official Academic Highlight Mode (Kurdish standardized highlights)
+        if (mode === 'official') {
+            if (txt.includes("وانە خوێندن") || txt.includes("وانەخوێندن")) {
+                return "bg-sky-50 dark:bg-sky-950/40 text-sky-900 dark:text-sky-100 border-sky-200 dark:border-sky-800/80 font-bold";
+            }
+            if (txt.includes("پشوو") || txt.includes("پشوی") || txt.includes("جەژن")) {
+                return "bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-100 border-rose-200 dark:border-rose-800/80 font-bold";
+            }
+            if (txt.includes("تاقیکردنەوەی مید تێرم") || txt.includes("تاقیکردنەوەی میدتێرم") || txt.includes("میدتێرم") || txt.includes("مید تێرم")) {
+                return "bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-100 border-amber-200 dark:border-amber-800/80 font-bold";
+            }
+            if (txt.includes("تاقیکردنەوەی کۆتایی") || txt.includes("تاقیکردنەوەی کۆتاییی") || txt.includes("تاقیکردنەوەکان")) {
+                return "bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-100 border-orange-200 dark:border-orange-800/80 font-bold";
+            }
+            if (txt.includes("ئەنجام") || txt.includes("پەڵپ") || txt.includes("پێداچوونەوە")) {
+                return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 border-emerald-200 dark:border-emerald-800/80 font-bold";
+            }
+            
+            // Standard fallback classes for general columns
+            return isTeacherCell ? "bg-slate-50/50 dark:bg-slate-800/30 text-slate-500 dark:text-slate-400" : "bg-slate-100/70 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200";
+        }
+        
+        // OPTION 1: Default Colorful Palette mode (The multi-colored subject badges)
+        const cacheKey = txt.toLowerCase();
+        if (!subjectColorCache[cacheKey]) {
+            subjectColorCache[cacheKey] = paletteColors[cacheCounter % paletteColors.length];
+            cacheCounter++;
+        }
+        return subjectColorCache[cacheKey];
     }
 
     function populateFilters() {
         const items = state.data[state.activeTab] || [];
         
-        let days = new Set(), stages = new Set(), groups = new Set(), sems = new Set(), teachSubj = new Set();
+        let days = new Set(), stages = new Set(), groups = new Set(), sems = new Set(), teachers = new Set(), subjects = new Set();
         
         items.forEach(i => {
             if (i.Day && i.Day !== '-') days.add(i.Day.trim());
@@ -283,43 +448,38 @@
             if (i.Group && i.Group !== '-') groups.add(i.Group.toString().trim());
             if (i.Semester) sems.add(i.Semester);
             
-            // Dropdown logic based on active tab
-            if (state.activeTab === 'Schedules') {
-                if (i.Teacher && i.Teacher !== '-') teachSubj.add(i.Teacher.trim());
-                if (i.Subject && i.Subject !== '-') teachSubj.add(i.Subject.trim());
-            } else if (state.activeTab === 'Exams') {
-                // Only subjects for Exams
-                if (i.Y1_Subj && i.Y1_Subj !== '-') teachSubj.add(i.Y1_Subj.trim());
-                if (i.Y2_Subj && i.Y2_Subj !== '-') teachSubj.add(i.Y2_Subj.trim());
-                if (i.Y3_Subj && i.Y3_Subj !== '-') teachSubj.add(i.Y3_Subj.trim());
-                if (i.Y4_Subj && i.Y4_Subj !== '-') teachSubj.add(i.Y4_Subj.trim());
-                ['1','2','3','4'].forEach(s => stages.add(s)); // Force populating Stage pills
-            } else if (state.activeTab === 'Calendar') {
-                // Only subjects for Calendar
-                if (i.Subject && i.Subject !== '-') teachSubj.add(i.Subject.trim());
-            }
+            if (i.Teacher && i.Teacher !== '-') teachers.add(i.Teacher.trim());
+            if (i.Subject && i.Subject !== '-') subjects.add(i.Subject.trim());
+            if (i.Y1_Subj && i.Y1_Subj !== '-') subjects.add(i.Y1_Subj.trim()); 
+            if (i.Y2_Subj && i.Y2_Subj !== '-') subjects.add(i.Y2_Subj.trim());
+            if (i.Y3_Subj && i.Y3_Subj !== '-') subjects.add(i.Y3_Subj.trim());
+            if (i.Y4_Subj && i.Y4_Subj !== '-') subjects.add(i.Y4_Subj.trim());
         });
 
-        // Setup Pills
+        if (state.activeTab === 'Exams') { stages = new Set(['1','2','3','4']); }
+
         const dayOrder = { "Sunday":1, "Monday":2, "Tuesday":3, "Wednesday":4, "Thursday":5, "یەکشەممە":1, "دووشەممە":2, "سێشەممە":3, "چوارشەممە":4, "پێنجشەممە":5 };
         renderPills('day', Array.from(days).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99)));
         renderPills('stage', Array.from(stages).sort((a,b) => a.localeCompare(b, undefined, {numeric: true})));
         renderPills('group', Array.from(groups).sort());
         renderPills('semester', Array.from(sems).sort());
 
-        // Setup Dropdown Placeholder Text
-        const lbl = document.getElementById('filter-teacher-label');
-        if(state.activeTab === 'Schedules') lbl.innerText = dict[state.lang].all_teachers || "All Teachers & Subjects";
-        else if(state.activeTab === 'Exams') lbl.innerText = dict[state.lang].all_subjects || "All Subjects";
-        else if(state.activeTab === 'Calendar') lbl.innerText = dict[state.lang].filter_table || "Filter the table";
+        const tSel = document.getElementById('filter-teacher');
+        if (tSel) {
+            const currentT = tSel.value;
+            let ht = `<option value="">${dict[state.lang].all_teachers}</option>`;
+            Array.from(teachers).sort().forEach(opt => ht += `<option value="${opt}">${opt}</option>`);
+            tSel.innerHTML = ht; tSel.value = currentT;
+            tSel.style.display = (state.activeTab === 'Schedules') ? 'block' : 'none';
+        }
 
-        // Setup Dropdown Options
-        const sel = document.getElementById('filter-teacher');
-        if (sel) {
-            const current = sel.value;
-            let html = `<option value="">${lbl.innerText}</option>`;
-            Array.from(teachSubj).sort().forEach(opt => html += `<option value="${opt}">${opt}</option>`);
-            sel.innerHTML = html; sel.value = current;
+        const sSel = document.getElementById('filter-subject');
+        if (sSel) {
+            const currentS = sSel.value;
+            let ht = `<option value="">${dict[state.lang].all_subjects}</option>`;
+            Array.from(subjects).sort().forEach(opt => ht += `<option value="${opt}">${opt}</option>`);
+            sSel.innerHTML = ht; sSel.value = currentS;
+            sSel.style.display = (state.activeTab !== 'Announcements') ? 'block' : 'none';
         }
     }
 
@@ -329,12 +489,12 @@
         let html = '';
         const isAll = state.filters[type] === null;
         const active = "bg-brand-500 text-white shadow-md border-brand-600";
-        const inactive = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50";
+        const inactive = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700";
         
-        html += `<button onclick="setFilter('${type}', null)" class="px-3 py-1 rounded-lg border text-xs font-bold transition-all ${isAll ? active : inactive}">All</button>`;
+        html += `<button onclick="setFilter('${type}', null)" class="px-4 py-1.5 rounded-lg border text-xs font-bold transition-all ${isAll ? active : inactive}">All</button>`;
         options.forEach(opt => {
             const isAct = state.filters[type] === opt;
-            html += `<button onclick="setFilter('${type}', '${opt}')" class="px-3 py-1 rounded-lg border text-xs font-bold transition-all ${isAct ? active : inactive}">${opt}</button>`;
+            html += `<button onclick="setFilter('${type}', '${opt}')" class="px-4 py-1.5 rounded-lg border text-xs font-bold transition-all ${isAct ? active : inactive}">${opt}</button>`;
         });
         container.innerHTML = html;
     }
@@ -350,31 +510,27 @@
         
         const q = document.getElementById('search-input').value.toLowerCase();
         const fTeach = document.getElementById('filter-teacher') ? document.getElementById('filter-teacher').value : '';
+        const fSubj = document.getElementById('filter-subject') ? document.getElementById('filter-subject').value : '';
         
         let items = state.data[state.activeTab] || [];
         
-        // Setup the specific dynamic document title based on Active Tab
-        const docTitleHeader = document.getElementById('doc-title-header');
-        docTitleHeader.innerText = state.docTitles[state.activeTab] || "Schedule Document";
-        
-        // Universal Text/Teacher Filtering
         items = items.filter(item => {
             let match = true;
             if (q) { const dump = Object.values(item).join(' ').toLowerCase(); if (!dump.includes(q)) match = false; }
-            if (fTeach) {
+            if (fTeach && item.Teacher !== fTeach) match = false;
+            if (fSubj) {
                 const vals = Object.values(item);
-                if (!vals.some(v => typeof v === 'string' && v.trim() === fTeach)) match = false;
+                if (!vals.some(v => typeof v === 'string' && v.trim() === fSubj)) match = false;
             }
             return match;
         });
 
         if (items.length === 0) {
             target.classList.remove('hidden'); gridTarget.classList.add('hidden'); exportCtrls.classList.add('hidden');
-            target.innerHTML = `<div class="bg-white/60 p-10 text-center rounded-2xl border"><p class="font-bold text-slate-500">No records found</p></div>`;
+            target.innerHTML = `<div class="bg-white/60 dark:bg-slate-900/60 p-10 text-center rounded-2xl border dark:border-slate-800"><p class="font-bold text-slate-500">No records found matching your filters.</p></div>`;
             return;
         }
 
-        // View Routing
         if (state.activeTab === 'Schedules') {
             target.classList.add('hidden'); gridTarget.classList.remove('hidden'); exportCtrls.classList.remove('hidden');
             renderScheduleGrid(state.data.Schedules, items, gridTarget); 
@@ -386,30 +542,29 @@
             renderCalendarGrid(items, gridTarget);
         } else {
             gridTarget.classList.add('hidden'); target.classList.remove('hidden'); exportCtrls.classList.add('hidden');
-            renderStandardCards(items, target);
+            renderAnnouncementsCards(items, target);
         }
         lucide.createIcons();
     }
 
-    const palette = ['bg-[#cffafe] dark:bg-[#164e63]', 'bg-[#fef08a] dark:bg-[#713f12]', 'bg-[#fed7aa] dark:bg-[#7c2d12]', 'bg-[#e9d5ff] dark:bg-[#581c87]', 'bg-[#bbf7d0] dark:bg-[#14532d]', 'bg-[#fbcfe8] dark:bg-[#831843]', 'bg-[#e0e7ff] dark:bg-[#312e81]', 'bg-[#fecaca] dark:bg-[#7f1d1d]'];
-    let colorMap = {}; let cIdx = 0;
-    function getSubjColor(subject) {
-        if (!subject || subject === '-') return 'bg-white dark:bg-slate-900/40 text-slate-400';
-        const key = subject.trim().toLowerCase();
-        if (!colorMap[key]) { colorMap[key] = palette[cIdx % palette.length]; cIdx++; }
-        return colorMap[key] + ' text-slate-800 dark:text-white';
-    }
-    function getStageColor(stage) {
+    function getStageDataColor(stage) {
         const s = String(stage).trim();
-        if (s === '1') return 'bg-[#fef08a] dark:bg-yellow-600/50';
-        if (s === '2') return 'bg-[#bae6fd] dark:bg-sky-600/50';
-        if (s === '3') return 'bg-[#bbf7d0] dark:bg-green-600/50';
-        if (s === '4') return 'bg-[#e9d5ff] dark:bg-purple-600/50';
-        return 'bg-slate-200 dark:bg-slate-700';
+        if (s === '1') return 'bg-[#fefce8] dark:bg-yellow-900/10 text-yellow-950 dark:text-yellow-50';
+        if (s === '2') return 'bg-[#f0f9ff] dark:bg-sky-900/10 text-sky-950 dark:text-sky-50';
+        if (s === '3') return 'bg-[#f0fdf4] dark:bg-green-900/10 text-green-950 dark:text-green-50';
+        if (s === '4') return 'bg-[#faf5ff] dark:bg-purple-900/10 text-purple-950 dark:text-purple-50';
+        return 'bg-white dark:bg-slate-900/40 text-slate-900 dark:text-white';
+    }
+
+    function renderExportTitle(key) {
+        let text = (state.titles && state.titles[key]) || '';
+        if (!text) return '';
+        text = text.replace(/\n/g, '  |  ');
+        const editBtn = state.isAdmin ? `<button onclick="openTitleEdit('${key}')" class="admin-edit-btn mt-3 inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 text-xs font-bold shadow-sm hover:scale-105 transition-transform"><i data-lucide="edit-3" class="w-4 h-4"></i> Edit Title</button>` : '';
+        return `<div class="text-center py-6 px-4 mb-4"><h1 class="font-black text-xl sm:text-2xl md:text-3xl leading-relaxed text-slate-900 dark:text-white break-words">${text}</h1>${editBtn}</div>`;
     }
 
     function renderScheduleGrid(allData, filteredItems, container) {
-        document.getElementById('doc-title-header').classList.remove('hidden');
         const fDay = state.filters.day; const fStage = state.filters.stage; const fGroup = state.filters.group;
         filteredItems = filteredItems.filter(i => {
             if(fDay && i.Day !== fDay) return false;
@@ -418,163 +573,253 @@
             return true;
         });
 
-        let days = new Set(), times = new Set(), colsMap = new Map();
-        filteredItems.forEach(i => { days.add(i.Day); times.add(i.Time); colsMap.set(`${i.Stage}-${i.Group}`, {stage: i.Stage, group: i.Group}); });
+        let colsMap = new Map();
+        filteredItems.forEach(i => { colsMap.set(`${i.Stage}-${i.Group}`, {stage: i.Stage, group: i.Group}); });
+
+        let daysUnfiltered = new Set();
+        allData.forEach(i => { if (!fDay || i.Day === fDay) daysUnfiltered.add(i.Day); });
 
         const dayOrder = { "Sunday":1, "Monday":2, "Tuesday":3, "Wednesday":4, "Thursday":5, "یەکشەممە":1, "دووشەممە":2, "سێشەممە":3, "چوارشەممە":4, "پێنجشەممە":5 };
-        let sortedDays = Array.from(days).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99));
-        let sortedTimes = Array.from(times).sort(); 
+        let sortedDays = Array.from(daysUnfiltered).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99));
+        
         let columns = Array.from(colsMap.values()).sort((a,b) => {
             if(a.stage !== b.stage) return String(a.stage).localeCompare(String(b.stage), undefined, {numeric:true});
             return String(a.group).localeCompare(String(b.group));
         });
 
-        if(columns.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+        if(columns.length === 0) { container.innerHTML = "<p class='p-6 text-center font-bold text-slate-500'>No data matches filter.</p>"; return; }
 
-        let html = `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-left"><thead><tr>`;
-        html += `<th class="w-12 bg-slate-100 dark:bg-slate-800 text-xs text-center border-b-[3px] border-r-[3px]">Day</th><th class="w-24 bg-slate-100 dark:bg-slate-800 text-xs text-center border-b-[3px]">Time</th>`;
-        columns.forEach(col => { html += `<th colspan="2" class="p-2 text-center text-sm border-b-[3px] text-slate-800 dark:text-white ${getStageColor(col.stage)}">Stage ${col.stage} (${col.group})</th>`; });
+        let html = `<div id="export-wrapper" class="bg-white dark:bg-[#050B14] p-4 border border-slate-200 dark:border-slate-800 rounded-3xl">` + renderExportTitle('schedule') + `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-left"><thead><tr>`;
+        html += `<th class="w-16 bg-slate-100 dark:bg-slate-800 text-sm font-black text-center stage-end text-slate-700 dark:text-slate-300">Day</th><th class="w-28 bg-slate-100 dark:bg-slate-800 text-sm font-black text-center stage-end text-slate-700 dark:text-slate-300">Time</th>`;
+        
+        columns.forEach(col => { 
+            html += `<th colspan="2" class="p-3 text-center text-base font-black text-slate-900 dark:text-white stage-end ${getStageDataColor(col.stage).replace('10','30')}">Stage ${col.stage} (${col.group})</th>`; 
+        });
         html += `</tr></thead><tbody>`;
 
         sortedDays.forEach(day => {
-            const dayTimes = sortedTimes.filter(time => filteredItems.some(i => i.Day === day && i.Time === time));
-            if(dayTimes.length === 0) return;
+            const dayTimesUnfiltered = Array.from(new Set(allData.filter(i => i.Day === day).map(i => i.Time))).sort();
+            if(dayTimesUnfiltered.length === 0) return;
 
-            dayTimes.forEach((time, tIndex) => {
-                html += `<tr>`;
+            dayTimesUnfiltered.forEach((time, tIndex) => {
+                const isLastRow = tIndex === dayTimesUnfiltered.length - 1;
+                html += `<tr class="${isLastRow ? 'day-end' : ''}">`;
+                
                 if(tIndex === 0) { 
-                    // Fixed vertical text rendering structurally for html2canvas
-                    html += `<td rowspan="${dayTimes.length}" class="bg-slate-50 dark:bg-slate-800 border-b-[3px] border-r-[3px] border-slate-300 dark:border-slate-600">
-                                <div class="vertical-text-container"><div class="vertical-text">${day}</div></div>
-                             </td>`; 
+                    html += `<td rowspan="${dayTimesUnfiltered.length}" class="bg-slate-50 dark:bg-slate-800/80 stage-end text-center"><div class="vertical-text font-black tracking-widest text-base mx-auto text-slate-700 dark:text-slate-300">${day}</div></td>`; 
                 }
-                html += `<td class="bg-slate-50 dark:bg-slate-800/50 p-2 text-xs font-semibold text-center whitespace-nowrap">${time}</td>`;
+                
+                html += `<td class="bg-slate-50 dark:bg-slate-800/50 p-2 text-sm font-bold text-center whitespace-nowrap stage-end text-slate-600 dark:text-slate-400">${time}</td>`;
                 
                 columns.forEach(col => {
                     const rec = filteredItems.find(i => i.Day === day && i.Time === time && i.Stage == col.stage && i.Group == col.group);
+                    const baseBgClass = getStageDataColor(col.stage);
+                    
                     if(rec) {
-                        const cls = getSubjColor(rec.Subject);
-                        const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Schedules', '${rec._id}')" class="admin-edit-btn absolute top-1 right-1 bg-white/90 p-1 rounded text-brand-600 shadow-sm"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
-                        html += `<td class="${cls} p-2 text-xs font-bold text-center relative group min-w-[120px]">${rec.Subject} ${eBtn}</td>`;
-                        html += `<td class="${cls} p-2 text-xs font-medium text-center border-l-0 min-w-[90px]">${rec.Teacher}</td>`;
+                        const cellColor = getOptionSubjectColor(rec.Subject, false);
+                        const teacherColor = getOptionSubjectColor(rec.Subject, true);
+                        
+                        // Inline editable properties for Admin mode
+                        const subAttr = state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${rec._row}, ${rec._subCol})"` : '';
+                        const teachAttr = state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${rec._row}, ${rec._teachCol})"` : '';
+                        
+                        html += `<td ${subAttr} class="${cellColor} p-3 text-sm font-bold text-center min-w-[140px] break-words border-r">${rec.Subject||''}</td>`;
+                        html += `<td ${teachAttr} class="${teacherColor} p-3 text-xs font-semibold text-center border-l-0 min-w-[120px] stage-end break-words opacity-90">${rec.Teacher||''}</td>`;
                     } else {
-                        html += `<td class="bg-white dark:bg-[#0f172a]"></td><td class="bg-white dark:bg-[#0f172a]"></td>`;
+                        // Map virtual row index and cell indexes in Sheets from current day/time pair to allow adding records to blank fields
+                        const mappedRowRec = allData.find(i => i.Day === day && i.Time === time);
+                        const mappedRow = mappedRowRec ? mappedRowRec._row : null;
+                        
+                        const groupColIndex = col.group === 'A' ? 3 : 5;
+                        const subColIdx = (parseInt(col.stage) - 1) * 4 + groupColIndex;
+                        const teachColIdx = subColIdx + 1;
+
+                        if (state.isAdmin && mappedRow) {
+                            html += `<td contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${mappedRow}, ${subColIdx})" placeholder="[Blank]" class="${baseBgClass} opacity-40 hover:opacity-100 focus:opacity-100 p-3 text-xs font-bold text-center min-w-[140px] break-words border-dashed border-2 cursor-pointer">+ Add Subject</td>`;
+                            html += `<td contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${mappedRow}, ${teachColIdx})" placeholder="[Blank]" class="${baseBgClass} opacity-40 hover:opacity-100 focus:opacity-100 p-3 text-[11px] font-semibold text-center border-l-0 min-w-[120px] stage-end break-words border-dashed border-2 cursor-pointer">+ Add Teacher</td>`;
+                        } else {
+                            html += `<td class="${baseBgClass} min-w-[140px]"></td><td class="${baseBgClass} min-w-[120px] stage-end"></td>`;
+                        }
                     }
                 });
                 html += `</tr>`;
             });
         });
-        html += `</tbody></table></div>`;
+        html += `</tbody></table></div></div>`;
         container.innerHTML = html;
     }
 
     function renderExamsGrid(items, container) {
-        document.getElementById('doc-title-header').classList.remove('hidden');
         const fDay = state.filters.day; const fStage = state.filters.stage;
-        let data = items.filter(i => {
-            if(fDay && i.Day !== fDay) return false;
-            // specific exam stage filtering
-            if(fStage) { const sub = i[`Y${fStage}_Subj`]; if(!sub || sub.trim() === '-') return false; }
-            return true;
-        });
-        if(data.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+        let data = items.filter(i => { if(fDay && i.Day !== fDay) return false; return true; });
+        if(data.length === 0) { container.innerHTML = "<p class='p-6 text-center font-bold'>No data matches filter.</p>"; return; }
 
-        let html = `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-center"><thead><tr>`;
-        html += `<th class="w-10 bg-slate-100 dark:bg-slate-800 border-b-[3px]">No.</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Day</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Date</th>`;
+        let html = `<div id="export-wrapper" class="bg-white dark:bg-[#050B14] p-4 border border-slate-200 dark:border-slate-800 rounded-3xl font-sans">` + renderExportTitle('exam') + `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-center"><thead><tr>`;
+        html += `<th class="w-12 bg-slate-100 dark:bg-slate-800 text-sm font-black text-slate-700 dark:text-slate-300">No.</th><th class="bg-slate-100 dark:bg-slate-800 text-sm font-black text-slate-700 dark:text-slate-300">Day</th><th class="bg-slate-100 dark:bg-slate-800 text-sm font-black text-slate-700 dark:text-slate-300">Date</th>`;
         
         if (fStage) {
-            html += `<th class="bg-indigo-100 dark:bg-indigo-900/50 border-b-[3px]">Stage ${fStage} Subject</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Status</th>`;
+            html += `<th class="${getStageDataColor(fStage).replace('10','30')} text-sm font-black">Stage ${fStage} Subject</th><th class="bg-slate-100 dark:bg-slate-800 text-sm font-black text-slate-700 dark:text-slate-300">Status</th>`;
         } else {
-            html += `<th class="bg-yellow-100 dark:bg-yellow-900/50 border-b-[3px]">Stage 1</th><th class="bg-sky-100 dark:bg-sky-900/50 border-b-[3px]">Stage 2</th><th class="bg-green-100 dark:bg-green-900/50 border-b-[3px]">Stage 3</th><th class="bg-purple-100 dark:bg-purple-900/50 border-b-[3px]">Stage 4</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Status</th>`;
+            html += `<th class="${getStageDataColor(1).replace('10','30')} text-sm font-black">Stage 1</th><th class="${getStageDataColor(2).replace('10','30')} text-sm font-black">Stage 2</th><th class="${getStageDataColor(3).replace('10','30')} text-sm font-black">Stage 3</th><th class="${getStageDataColor(4).replace('10','30')} text-sm font-black">Stage 4</th><th class="bg-slate-100 dark:bg-slate-800 text-sm font-black text-slate-700 dark:text-slate-300">Status</th>`;
         }
         html += `</tr></thead><tbody>`;
 
         data.forEach((item, idx) => {
-            const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Exams', '${item._id}')" class="admin-edit-btn inline-block ml-2 bg-slate-200 dark:bg-slate-700 p-1 rounded text-brand-600"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
-            html += `<tr><td class="font-bold text-slate-400 text-xs">${idx+1} ${eBtn}</td><td class="text-sm font-medium">${item.Day}</td><td class="text-sm text-slate-500">${item.Date}</td>`;
+            const c = (colIdx) => state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Exams', ${item._row}, ${colIdx})"` : '';
+            
+            html += `<tr><td class="font-bold text-slate-400 text-xs">${idx+1}</td><td class="text-sm font-bold" ${c(1)}>${item.Day}</td><td class="text-sm text-slate-500 font-medium" ${c(2)}>${item.Date}</td>`;
             
             if (fStage) {
-                const sub = item[`Y${fStage}_Subj`]; const stat = item[`Y${fStage}_Stat`];
-                html += `<td class="text-sm font-bold">${sub||'-'}</td><td class="text-xs font-mono font-bold">${stat||'-'}</td>`;
+                const subColIdx = (fStage == 1 ? 3 : (fStage == 2 ? 5 : (fStage == 3 ? 7 : 9)));
+                const statColIdx = subColIdx + 1;
+                html += `<td class="text-sm font-bold ${getStageDataColor(fStage)}" ${c(subColIdx)}>${item[`Y${fStage}_Subj`]||'-'}</td><td class="text-xs font-mono" ${c(statColIdx)}>${item[`Y${fStage}_Stat`]||'-'}</td>`;
             } else {
                 let statuses = [item.Y1_Stat, item.Y2_Stat, item.Y3_Stat, item.Y4_Stat].filter(s => s && s.trim() !== "");
-                let allSame = statuses.every(s => s === statuses[0]);
-                let finalStatus = allSame && statuses.length > 0 ? statuses[0] : (statuses.length > 0 ? "Mixed Status" : "-");
+                let finalStatus = (statuses.length > 0 && statuses.every(s => s === statuses[0])) ? statuses[0] : (statuses.length > 0 ? "Mixed" : "-");
 
-                html += `<td class="text-sm">${item.Y1_Subj||'-'}</td><td class="text-sm">${item.Y2_Subj||'-'}</td><td class="text-sm">${item.Y3_Subj||'-'}</td><td class="text-sm">${item.Y4_Subj||'-'}</td><td class="text-xs font-mono font-bold text-brand-600 dark:text-brand-400">${finalStatus}</td>`;
+                html += `<td class="text-sm font-bold ${getStageDataColor(1)}" ${c(3)}>${item.Y1_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(2)}" ${c(5)}>${item.Y2_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(3)}" ${c(7)}>${item.Y3_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(4)}" ${c(9)}>${item.Y4_Subj||'-'}</td><td class="text-xs font-mono bg-slate-50 dark:bg-slate-800/50">${finalStatus}</td>`;
             }
             html += `</tr>`;
         });
-        html += `</tbody></table></div>`;
+        html += `</tbody></table></div></div>`;
         container.innerHTML = html;
-    }
-
-    function getCalendarRowColor(subject) {
-        if(!subject) return "bg-white dark:bg-[#0f172a]";
-        const s = subject.trim();
-        if(s.includes("وانەخوێندن")) return "bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100";
-        if(s.includes("تاقیکردنەوەی کۆتایی")) return "bg-rose-200 dark:bg-rose-900/60 text-rose-900 dark:text-rose-100 font-bold";
-        if(s.includes("ئەنجام و پەڵپ")) return "bg-orange-100 dark:bg-orange-900/50 text-orange-900 dark:text-orange-100";
-        if(s.toLowerCase().includes("midterm") || s.includes("میدتێرم") || s.includes("تاقیکردنەوەی Midterm")) return "bg-purple-100 dark:bg-purple-900/50 text-purple-900 dark:text-purple-100";
-        return "bg-slate-50 dark:bg-[#0f172a]"; // default
     }
 
     function renderCalendarGrid(items, container) {
-        document.getElementById('doc-title-header').classList.remove('hidden');
         const fSem = state.filters.semester;
         let data = items.filter(i => { if(fSem && i.Semester !== fSem) return false; return true; });
-        if(data.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+        if(data.length === 0) { container.innerHTML = "<p class='p-6 text-center font-bold'>No data matches filter.</p>"; return; }
 
-        let html = `<div class="timetable-container custom-scroll" dir="rtl"><table id="export-target" class="timetable text-right"><thead><tr>`;
-        html += `<th class="w-10 bg-slate-100 dark:bg-slate-800 text-center border-b-[3px]">No.</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px] text-center">Week</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px] text-center">Date</th><th class="w-1/2 bg-slate-100 dark:bg-slate-800 border-b-[3px]">Bologna Subject</th>`;
+        let html = `<div id="export-wrapper" class="bg-white dark:bg-[#050B14] p-4 border border-slate-200 dark:border-slate-800 rounded-3xl font-sans" dir="rtl">` + renderExportTitle('calendar') + `<div class="timetable-container custom-scroll"><table id="export-target" class="timetable text-right"><thead><tr class="bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-white">`;
+        html += `<th class="w-[8%] text-center text-sm font-black p-4">ڕیزبەندی</th><th class="w-[12%] text-sm font-black text-center p-4">هەفتە</th><th class="w-[20%] text-sm font-black text-center p-4">ڕێکەوت</th><th class="w-[60%] text-sm font-black text-right p-4">بابەتی پڕۆسەی بۆلۆنیا</th>`;
         html += `</tr></thead><tbody>`;
 
         data.forEach((item, idx) => {
-            const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Calendar', '${item._id}')" class="admin-edit-btn absolute left-2 top-2 bg-white/50 p-1 rounded text-brand-600"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
-            const rowCls = getCalendarRowColor(item.Subject);
-            html += `<tr class="relative ${rowCls}"><td class="font-bold text-xs text-center border-slate-300 dark:border-slate-600">${idx+1}</td><td class="text-sm font-medium text-center border-slate-300 dark:border-slate-600">${item.Week}</td><td class="text-sm font-mono text-center border-slate-300 dark:border-slate-600">${item.Date}</td><td class="text-sm font-bold border-slate-300 dark:border-slate-600 relative">${item.Subject} ${eBtn}</td></tr>`;
+            const c = (colIdx) => state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Calendar', ${item._row}, ${colIdx})"` : '';
+            const rowColorClass = getOptionSubjectColor(item.Subject, false);
+            
+            html += `<tr class="${rowColorClass} transition-colors border-b dark:border-slate-800">
+                <td class="font-black text-slate-500 text-xs text-center p-3.5">${idx+1}</td>
+                <td class="text-sm font-bold text-center p-3.5" ${c(1)}>${item.Week}</td>
+                <td class="text-sm font-semibold text-center p-3.5 whitespace-nowrap opacity-90" ${c(2)}>${item.Date}</td>
+                <td class="text-base font-bold p-3.5 tracking-wide text-right" ${c(3)}>${item.Subject}</td>
+            </tr>`;
         });
-        html += `</tbody></table></div>`;
+        html += `</tbody></table></div></div>`;
         container.innerHTML = html;
     }
 
-    function renderStandardCards(items, target) {
-        document.getElementById('doc-title-header').classList.add('hidden');
+    function renderAnnouncementsCards(items, target) {
         items.forEach((item, index) => {
-            const c = document.createElement('div');
-            c.className = "bg-white/60 dark:bg-slate-900/30 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-sm rounded-2xl p-4 animate-card relative";
-            let h = '<div class="grid gap-2 text-sm">';
-            for (const [k, v] of Object.entries(item)) {
-                if (k.startsWith('_')) continue;
-                h += `<div class="flex justify-between border-b border-slate-100 dark:border-white/5 pb-2 last:border-0"><span class="text-slate-500 text-xs font-bold">${k}</span><span class="font-medium text-right">${v||'-'}</span></div>`;
-            }
-            c.innerHTML = h + '</div>'; target.appendChild(c);
+            const status = (item.Statues || '').toLowerCase();
+            let badgeCls = 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200';
+            let icon = 'info';
+            if (status === 'done') { badgeCls = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200'; icon = 'check-circle'; }
+            if (status === 'fail') { badgeCls = 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200'; icon = 'x-circle'; }
+
+            const editBtn = state.isAdmin ? `<button onclick="openRowEdit('Announcements', '${item._id}')" class="absolute top-4 left-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-brand-600 hover:scale-110 transition-transform"><i data-lucide="edit-2" class="w-4 h-4"></i></button>` : '';
+
+            const html = `
+                <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-3xl p-6 sm:p-8 animate-card relative w-full overflow-hidden">
+                    ${editBtn}
+                    <div class="absolute right-0 top-0 w-24 h-24 bg-brand-500/5 rounded-bl-[100px] pointer-events-none"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="px-3 py-1 text-[11px] uppercase tracking-wider font-black rounded-full border ${badgeCls} flex items-center gap-1.5"><i data-lucide="${icon}" class="w-3.5 h-3.5"></i> ${item.Statues || 'Active'}</span>
+                        <div class="flex flex-col items-end text-slate-500 dark:text-slate-400 text-xs font-mono gap-1.5 font-bold">
+                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${item['time-start'] || '-'}</span>
+                            <span class="flex items-center gap-1 text-indigo-500 dark:text-indigo-400"><i data-lucide="send" class="w-3.5 h-3.5"></i> Via: ${item.Via || 'All'}</span>
+                        </div>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-kurdish mb-3 leading-snug">${item.Announcements || 'No Content'}</h3>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm font-bold font-kurdish">
+                        <i data-lucide="users" class="w-4 h-4 text-brand-500"></i> To: ${item['to whome'] || 'All'}
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            target.appendChild(div.firstElementChild);
         });
     }
 
+    function updateHeroAnnouncement() {
+        const hero = document.getElementById('announcement-hero');
+        const items = state.data.Announcements || [];
+        const active = items.find(i => i.Statues?.toLowerCase() !== 'done');
+        if (active) {
+            hero.classList.remove('hidden');
+            document.getElementById('hero-title').innerText = active.Announcements || 'Important Notice';
+            document.getElementById('hero-desc').innerText = `To: ${active['to whome'] || 'All'}`;
+            document.getElementById('hero-date').innerText = active['time-start'] || '';
+            document.getElementById('hero-status').innerText = active.Statues || 'Active';
+        } else {
+            hero.classList.add('hidden');
+        }
+    }
+
     async function getCanvas() {
-        const wrapper = document.getElementById('export-wrapper');
-        if(!wrapper) return null;
+        const originalEl = document.getElementById('export-wrapper');
+        if(!originalEl) return null;
         
-        wrapper.classList.add('exporting');
-        // temporarily enforce absolute light mode on wrapper for printing
-        const wasDark = document.documentElement.classList.contains('dark');
-        if(wasDark) document.documentElement.classList.remove('dark');
+        // Clone table temporarily, move to off-screen context to guarantee full width captures without truncation
+        const clone = originalEl.cloneNode(true);
+        clone.classList.add('export-layout-wrapper');
+        clone.style.position = 'fixed';
+        clone.style.top = '-9999px';
+        clone.style.left = '-9999px';
+        clone.style.width = '1200px'; 
+        clone.style.height = 'auto';
+        clone.style.zIndex = '-9999';
         
-        // Allow DOM to apply padding and layout changes before capturing
-        await new Promise(r => setTimeout(r, 150));
+        // Delete editable action buttons inside clone
+        clone.querySelectorAll('.admin-edit-btn').forEach(b => b.remove());
         
-        const canvas = await html2canvas(wrapper, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        const tableContainer = clone.querySelector('.timetable-container');
+        if(tableContainer) {
+            tableContainer.style.overflowX = 'visible';
+            tableContainer.style.width = '100%';
+            tableContainer.style.maxWidth = 'none';
+            tableContainer.style.border = 'none';
+            tableContainer.style.borderRadius = '0px';
+            tableContainer.style.boxShadow = 'none';
+        }
         
-        if(wasDark) document.documentElement.classList.add('dark');
-        wrapper.classList.remove('exporting');
-        return canvas;
+        const table = clone.querySelector('.timetable');
+        if(table) {
+            table.style.width = '100%';
+            table.style.minWidth = '100%';
+        }
+
+        document.body.appendChild(clone);
+        
+        const isDark = document.documentElement.classList.contains('dark');
+        const bgColor = isDark ? '#0f172a' : '#ffffff';
+        
+        try {
+            // Optimized scale of 1.8 delivers maximum high-def clarity while remaining lightweight
+            const canvas = await html2canvas(clone, { 
+                scale: 1.8,
+                backgroundColor: bgColor,
+                useCORS: true,
+                logging: false,
+                width: clone.offsetWidth,
+                height: clone.offsetHeight
+            });
+            document.body.removeChild(clone);
+            return canvas;
+        } catch(e) {
+            console.error(e);
+            if (clone.parentNode) {
+                document.body.removeChild(clone);
+            }
+            return null;
+        }
     }
 
     async function exportGrid(type) {
-        showToast("Generating file...", "loader", "brand");
+        showToast("Generating high-quality file...", "loader", "brand");
         const canvas = await getCanvas();
-        if(!canvas) return;
+        if(!canvas) { showToast("Failed to generate image.", "x", "red"); return; }
 
         if(type === 'png') {
             const a = document.createElement('a');
@@ -583,35 +828,92 @@
             a.click();
             showToast("PNG Downloaded", "check", "green");
         } else if (type === 'pdf') {
-            const imgData = canvas.toDataURL('image/png');
+            const imgData = canvas.toDataURL('image/jpeg', 0.85); // Compress slightly to keep payload minimal
             const { jsPDF } = window.jspdf;
+            const orientation = (state.activeTab === 'Calendar' || state.activeTab === 'Exams') ? 'p' : 'l'; 
+            const pdf = new jsPDF(orientation, 'pt', 'a4');
             
-            // Calendar is Portrait, others Landscape
-            const orientation = state.activeTab === 'Calendar' ? 'p' : 'l';
-            const pdf = new jsPDF(orientation, 'pt', 'a4'); 
+            const pdfW = pdf.internal.pageSize.getWidth();
+            const pdfH = pdf.internal.pageSize.getHeight();
             
-            const pdfW = pdf.internal.pageSize.getWidth() - 40; 
-            const pdfH = (canvas.height * pdfW) / canvas.width;
+            // EXACT 1.5 cm free layout margins = 42.5pt
+            const margin = 42.5; 
+            const printableW = pdfW - (margin * 2);
+            const printableH = (canvas.height * printableW) / canvas.width;
             
-            pdf.addImage(imgData, 'PNG', 20, 20, pdfW, pdfH);
+            pdf.addImage(imgData, 'JPEG', margin, margin, printableW, printableH);
             pdf.save(`Schedule_${state.activeTab}.pdf`);
-            showToast("PDF Downloaded", "check", "green");
+            showToast("PDF Downloaded with 1.5cm Margin", "check", "green");
         }
     }
 
-    async function shareGrid() {
-        const canvas = await getCanvas();
-        if(!canvas) return;
-        canvas.toBlob(async (blob) => {
-            const file = new File([blob], `Schedule_${state.activeTab}.png`, { type: "image/png" });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({ title: "University Schedule", files: [file] });
-                } catch(e) { console.log(e); }
-            } else {
-                showToast("Sharing not supported on this browser.", "x", "red");
+    async function handleCellEdit(element, sheet, row, col) {
+        const val = element.innerText.trim();
+        element.classList.add('opacity-50');
+        try {
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'updateCell', sheetName: state.sheetNames[sheet] || sheet, row: row, col: col, value: val }) });
+            const item = state.data[sheet].find(i => i._row == row);
+            if (item) {
+                if (sheet === 'Schedules' && item._subCol == col) item.Subject = val;
+                if (sheet === 'Schedules' && item._teachCol == col) item.Teacher = val;
+            }
+            showToast("Saved instantly", "check", "green");
+        } catch(e) {
+            showToast("Save failed", "x", "red");
+        } finally {
+            element.classList.remove('opacity-50');
+        }
+    }
+
+    function setupPasteHandler() {
+        document.addEventListener('paste', function(e) {
+            const activeCell = e.target.closest('td[contenteditable="true"], th[contenteditable="true"]');
+            if (state.isAdmin && activeCell) {
+                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+                e.preventDefault();
+                document.execCommand('insertText', false, text);
+                activeCell.blur(); 
             }
         });
+    }
+
+    function openRowEdit(sheet, id) {
+        const item = state.data[sheet].find(i => i._id == id); if(!item) return;
+        state.editContext = { sheet, id, original: {...item} };
+        const f = document.getElementById('dynamic-edit-fields'); f.innerHTML = '';
+        
+        let map = [];
+        if (sheet === 'Announcements') {
+            document.getElementById('edit-meta').innerText = `Sheet Row: ${item._row}`;
+            map = [ {col: 1, key: 'Announcements'}, {col: 2, key: 'to whome'}, {col: 3, key: 'time-start'}, {col: 4, key: 'Statues'}, {col: 5, key: 'Via'} ];
+        }
+
+        map.forEach(m => {
+            const val = m.val !== undefined ? m.val : (item[m.key] || '');
+            f.innerHTML += `<div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-500 uppercase tracking-wider">${m.key}</label><input type="text" data-col="${m.col}" data-key="${m.key}" value="${val}" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold"></div>`;
+        });
+
+        document.getElementById('edit-modal').classList.remove('hidden'); document.getElementById('edit-modal').classList.add('flex');
+    }
+
+    function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); document.getElementById('edit-modal').classList.remove('flex'); }
+
+    async function saveRowEdit() {
+        if(!state.editContext) return;
+        const btn = document.getElementById('save-btn'); btn.innerHTML = '<i class="loader w-4 h-4 border-2"></i> Saving...'; btn.disabled = true;
+        const updates = [];
+        document.querySelectorAll('#dynamic-edit-fields input').forEach(input => {
+            const col = input.getAttribute('data-col'); const key = input.getAttribute('data-key');
+            if(state.editContext.original[key] != input.value) {
+                updates.push({ action: 'updateCell', sheetName: state.sheetNames[state.editContext.sheet] || state.editContext.sheet, row: state.editContext.original._row, col: parseInt(col), value: input.value });
+            }
+        });
+
+        try {
+            for(let p of updates) await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(p) });
+            showToast("Card Updated!", "check", "green"); closeEditModal(); fetchData();
+        } catch(e) { showToast("Error saving", "x", "red"); }
+        finally { btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Save'; btn.disabled = false; lucide.createIcons(); }
     }
 
     function switchTab(tab) {
@@ -624,71 +926,175 @@
         
         document.getElementById('row-stage').style.display = (tab==='Schedules'||tab==='Exams') ? 'flex' : 'none';
         document.getElementById('row-day').style.display = (tab==='Schedules'||tab==='Exams') ? 'flex' : 'none';
-        document.getElementById('row-group-container').style.display = (tab==='Schedules') ? 'flex' : 'none'; // Only schedules have groups
         document.getElementById('row-semester').style.display = (tab==='Calendar') ? 'flex' : 'none';
+        document.getElementById('group-filter-wrap').style.display = (tab==='Schedules') ? 'flex' : 'none';
         
         populateFilters(); renderData();
     }
 
     function toggleTheme() { document.documentElement.classList.toggle('dark'); lucide.createIcons(); }
     function toggleLanguage() { state.lang = state.lang === 'ku' ? 'en' : 'ku'; applyLocalization(); }
-    function applyLocalization() { /* Same as before, keeping short */ document.documentElement.dir = state.lang==='ku'?'rtl':'ltr'; document.getElementById('lang-text').innerText = state.lang==='ku'?'EN':'KU'; document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = dict[state.lang][el.getAttribute('data-i18n')] || el.innerText); }
+    function applyLocalization() { document.documentElement.dir = state.lang==='ku'?'rtl':'ltr'; document.getElementById('lang-text').innerText = state.lang==='ku'?'EN':'KU'; document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = dict[state.lang][el.getAttribute('data-i18n')] || el.innerText); }
 
     function openAdminLogin() { if(state.isAdmin){state.isAdmin=false; document.body.classList.remove('admin-mode'); renderData(); return;} document.getElementById('admin-login-modal').classList.remove('hidden'); document.getElementById('admin-login-modal').classList.add('flex'); }
     function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); document.getElementById('admin-login-modal').classList.remove('flex'); }
-    function verifyAdmin() { if(document.getElementById('admin-pass').value === 'admin123'){ state.isAdmin=true; document.body.classList.add('admin-mode'); closeAdminLogin(); renderData(); showToast("Admin Mode", "unlock", "green"); } }
-
-    function openRowEdit(sheet, id) {
-        const item = state.data[sheet].find(i => i._id == id); if(!item) return;
-        state.editContext = { sheet, id, original: {...item} };
-        const f = document.getElementById('dynamic-edit-fields'); f.innerHTML = '';
-        
-        // Handle specific parser column mappings for saving back to Sheet
-        let map = [];
-        if(sheet === 'Schedules') {
-            map = [ {col: item._subCol, key: 'Subject', val: item.Subject}, {col: item._teachCol, key: 'Teacher', val: item.Teacher} ];
-            document.getElementById('edit-meta').innerText = `Grid Row: ${item._row} | Day: ${item.Day} | Time: ${item.Time}`;
-        } else if (sheet === 'Exams') {
-            document.getElementById('edit-meta').innerText = `Sheet Row: ${item._row}`;
-            map = [ {col:1, key:'Day'}, {col:2, key:'Date'}, {col:3, key:'Y1_Subj'}, {col:4, key:'Y1_Stat'}, {col:5, key:'Y2_Subj'}, {col:6, key:'Y2_Stat'}, {col:7, key:'Y3_Subj'}, {col:8, key:'Y3_Stat'}, {col:9, key:'Y4_Subj'}, {col:10, key:'Y4_Stat'} ];
-        } else if (sheet === 'Calendar') {
-            document.getElementById('edit-meta').innerText = `Sheet Row: ${item._row}`;
-            map = [ {col:1, key:'Week'}, {col:2, key:'Date'}, {col:3, key:'Subject'} ];
-        }
-
-        map.forEach(m => {
-            const val = m.val !== undefined ? m.val : (item[m.key] || '');
-            f.innerHTML += `<div class="flex flex-col gap-1"><label class="text-xs font-bold text-slate-500">${m.key}</label><input type="text" data-col="${m.col}" data-key="${m.key}" value="${val}" class="w-full bg-slate-50 dark:bg-slate-800 border p-2 rounded text-sm outline-none"></div>`;
-        });
-
-        document.getElementById('edit-modal').classList.remove('hidden'); document.getElementById('edit-modal').classList.add('flex');
+    
+    async function verifyAdmin() {
+        const pass = document.getElementById('admin-pass').value;
+        try {
+            const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'verifyAdmin', password: pass }) });
+            const json = await res.json();
+            if (json.success) {
+                state.isAdmin = true; document.body.classList.add('admin-mode'); closeAdminLogin(); renderData();
+                showToast("Admin Mode Activated. Click any table cell to edit.", "unlock", "green");
+            } else {
+                showToast("Wrong password", "x", "red");
+            }
+        } catch(e) { showToast("Error verifying", "x", "red"); }
     }
 
-    function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); document.getElementById('edit-modal').classList.remove('flex'); }
-
-    async function saveRowEdit() {
-        if(!state.editContext) return;
-        const btn = document.getElementById('save-btn'); btn.innerHTML = 'Saving...'; btn.disabled = true;
-        const updates = [];
-        document.querySelectorAll('#dynamic-edit-fields input').forEach(input => {
-            const col = input.getAttribute('data-col'); const key = input.getAttribute('data-key');
-            if(state.editContext.original[key] != input.value) {
-                updates.push({ action: 'updateCell', sheetName: state.sheetNames[state.editContext.sheet] || state.editContext.sheet, row: state.editContext.original._row, col: parseInt(col), value: input.value });
-            }
-        });
-
+    let currentTitleKey = null;
+    function openTitleEdit(key) {
+        currentTitleKey = key;
+        document.getElementById('title-edit-textarea').value = (state.titles && state.titles[key]) || '';
+        document.getElementById('title-edit-modal').classList.remove('hidden'); document.getElementById('title-edit-modal').classList.add('flex');
+    }
+    function closeTitleEdit() { document.getElementById('title-edit-modal').classList.add('hidden'); document.getElementById('title-edit-modal').classList.remove('flex'); currentTitleKey = null; }
+    async function saveTitleEdit() {
+        if(!currentTitleKey) return;
+        const val = document.getElementById('title-edit-textarea').value;
+        const btn = document.getElementById('title-save-btn'); btn.innerHTML = '<i class="loader w-4 h-4 border-2 border-white"></i>'; btn.disabled = true;
         try {
-            for(let p of updates) await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(p) });
-            showToast("Saved!", "check", "green"); closeEditModal(); fetchData();
-        } catch(e) { showToast("Error saving", "x", "red"); }
-        finally { btn.innerHTML = 'Save'; btn.disabled = false; }
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTitle', key: currentTitleKey, value: val }) });
+            state.titles[currentTitleKey] = val;
+            showToast("Title updated", "check", "green"); closeTitleEdit(); renderData();
+        } catch(e) { showToast("Error saving title", "x", "red"); }
+        finally { btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Save'; btn.disabled = false; lucide.createIcons(); }
+    }
+
+    function toggleTelegramTokenField() {
+        const via = document.getElementById('send-via').value;
+        const container = document.getElementById('telegram-token-container');
+        if (via === 'Telegram') {
+            container.classList.remove('hidden');
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
+    function openAdminSendModal() { 
+        document.getElementById('admin-send-modal').classList.remove('hidden'); 
+        document.getElementById('admin-send-modal').classList.add('flex'); 
+        toggleTelegramTokenField();
+    }
+    function closeAdminSendModal() { 
+        document.getElementById('admin-send-modal').classList.add('hidden'); 
+        document.getElementById('admin-send-modal').classList.remove('flex'); 
+    }
+
+    async function toggleAttachmentState() {
+        const checkbox = document.getElementById('send-attach');
+        checkbox.checked = !checkbox.checked;
+        
+        const previewContainer = document.getElementById('broadcast-preview-container');
+        const loader = document.getElementById('broadcast-preview-loader');
+        const previewImg = document.getElementById('broadcast-preview-image');
+
+        if (checkbox.checked) {
+            previewContainer.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+
+            const canvas = await getCanvas();
+            if (canvas) {
+                previewImg.src = canvas.toDataURL('image/png');
+                previewImg.classList.remove('hidden');
+            } else {
+                showToast("Failed to render preview", "x", "red");
+                checkbox.checked = false;
+                previewContainer.classList.add('hidden');
+            }
+            loader.classList.add('hidden');
+        } else {
+            previewContainer.classList.add('hidden');
+        }
+    }
+    
+    async function executeAdminSend() {
+        const target = document.getElementById('send-target').value;
+        const via = document.getElementById('send-via').value; 
+        const subject = document.getElementById('send-subject').value.trim();
+        const msg = document.getElementById('send-message').value.trim();
+        const attach = document.getElementById('send-attach').checked;
+        const botToken = document.getElementById('telegram-bot-token').value.trim();
+
+        if (via === 'Telegram' && !botToken) {
+            showToast("Please provide a Telegram Bot Token", "x", "red");
+            return;
+        }
+
+        if (!subject || !msg) {
+            showToast("Subject and message are required", "x", "red");
+            return;
+        }
+
+        if (via === 'Telegram') {
+            localStorage.setItem('telegram_bot_token', botToken);
+        }
+        
+        const btn = document.getElementById('exec-send-btn'); 
+        btn.innerHTML = '<i class="loader w-4 h-4 border-2 border-white"></i> Sending...'; 
+        btn.disabled = true;
+
+        let fileBase64 = null;
+        let fileName = "";
+        let fileMime = "";
+
+        if (attach) {
+            const canvas = await getCanvas();
+            if (canvas) {
+                const imgData = canvas.toDataURL('image/png');
+                fileBase64 = imgData.split(',')[1];
+                fileName = `Department_Schedule_${state.activeTab}.png`;
+                fileMime = "image/png";
+            }
+        }
+        
+        try {
+            const payload = {
+                action: 'sendNotification',
+                subject: subject,
+                message: msg,
+                targetAudience: target,
+                via: via,
+                botToken: botToken,
+                fileBase64: fileBase64,
+                fileName: fileName,
+                fileMime: fileMime
+            };
+
+            const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const json = await res.json();
+            if (json.success) {
+                showToast(json.message, "check", "green");
+                closeAdminSendModal();
+            } else {
+                showToast(json.error || "Sending failed", "x", "red");
+            }
+        } catch(e) { showToast("Network Error", "x", "red"); }
+        finally { btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Send Now'; btn.disabled = false; lucide.createIcons(); }
     }
 
     function showToast(m, i, c) {
         const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m;
         document.getElementById('toast-icon').setAttribute('data-lucide', i);
-        t.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-full shadow-2xl font-bold text-sm text-${c}-500`;
-        setTimeout(() => t.classList.add('opacity-0', 'translate-y-10'), 3000);
+        t.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm text-${c}-500`;
+        t.style.opacity = '1';
+        t.style.transform = 'translate(-50%, 0)';
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translate(-50%, 40px)';
+        }, 4000);
         lucide.createIcons();
     }
 </script>
