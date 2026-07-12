@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl" class="dark">
+<html lang="ku" dir="rtl" class="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Enghub • University Portal</title>
     
-    <meta name="theme-color" content="#050B14" id="theme-color-meta">
+    <meta name="theme-color" content="#f8fafc" id="theme-color-meta">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -20,108 +20,89 @@
                         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
                         kurdish: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif', 'Arial'],
                     },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6',
-                            600: '#2563eb', 900: '#1e3a8a', 950: '#050B14'
-                        }
-                    }
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a', 950: '#050B14' } }
                 }
             }
         }
     </script>
 
-    <!-- Lucide Icons -->
+    <!-- External Libraries: Icons, PDF, Canvas -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        body {
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+        body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        ::-webkit-scrollbar { width: 0px; height: 0px; background: transparent; }
         
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; background: rgba(0,0,0,0.05); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
 
-        .active-pill {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35);
-            color: white !important;
-        }
+        .active-pill { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35); color: white !important; border-color: transparent !important; }
 
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            50% { transform: translate(25px, -40px) scale(1.08); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
+        @keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 50% { transform: translate(25px, -40px) scale(1.08); } 100% { transform: translate(0px, 0px) scale(1); } }
         .animate-blob { animation: blob 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        @keyframes cardPop {
-            from { opacity: 0; transform: scale(0.96) translateY(12px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes cardPop { from { opacity: 0; transform: scale(0.96) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .animate-card { animation: cardPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
         .led-border-window { position: relative; overflow: hidden; }
-        .led-border-window::before {
-            content: ''; position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent 20%, #3b82f6, #8b5cf6, #ec4899, transparent 80%);
-            animation: rotateLED 5s linear infinite; z-index: 0;
-        }
+        .led-border-window::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent 20%, #3b82f6, #8b5cf6, #ec4899, transparent 80%); animation: rotateLED 5s linear infinite; z-index: 0; }
         .led-border-inner { position: relative; z-index: 1; margin: 3px; }
         @keyframes rotateLED { 100% { transform: rotate(360deg); } }
 
-        /* Hide edit buttons unless admin */
-        .admin-edit-btn { display: none; }
-        body.admin-mode .admin-edit-btn { display: flex; }
+        /* Grid Styles & Thick Borders */
+        .timetable-container { border-radius: 1rem; overflow-x: auto;}
+        .timetable { width: 100%; min-width: 800px; border-collapse: collapse; background: white; }
+        .dark .timetable { background: #0f172a; }
+        /* Make borders thick for easier diagnostic */
+        .timetable th, .timetable td { border: 3px solid #64748b !important; padding: 0.5rem; vertical-align: middle; }
+        .dark .timetable th, .dark .timetable td { border: 3px solid #334155 !important; }
+        .timetable th { position: sticky; top: 0; z-index: 10; font-weight: 800; }
         
-        /* Spinner */
-        .loader {
-            border: 3px solid rgba(59, 130, 246, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #3b82f6;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
+        /* Fix html2canvas vertical text rotation */
+        .vertical-text-container { display: flex; align-items: center; justify-content: center; width: 40px; height: 100%; min-height: 120px; margin: 0 auto; }
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-weight: 900; letter-spacing: 1px; }
+        
+        .loader { border: 3px solid rgba(59, 130, 246, 0.3); border-radius: 50%; border-top: 3px solid #3b82f6; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Print/Export overrides */
+        .exporting #export-wrapper { padding: 40px !important; background-color: #ffffff !important; border-radius: 0; box-sizing: border-box !important; }
+        .exporting .timetable-container { overflow-x: visible !important; border: none !important; }
+        .exporting .admin-edit-btn { display: none !important; }
+        .exporting .timetable th, .exporting .timetable td { border: 3px solid #000 !important; color: #000 !important; }
+        .exporting .vertical-text { color: #000 !important; }
+        .exporting #doc-title-header { display: block !important; margin-bottom: 24px !important; font-size: 1.25rem !important; color: #000 !important; }
+        .editable-title { cursor: pointer; border: 1px dashed transparent; padding: 4px; border-radius: 4px; transition: 0.3s; }
+        body.admin-mode .editable-title:hover { border-color: #3b82f6; background-color: rgba(59,130,246,0.05); }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased select-none overflow-x-hidden relative pb-10 transition-colors duration-500">
 
-    <!-- Atmospheric Deep Glow Blobs -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[50%] rounded-full bg-blue-300/30 dark:bg-blue-600/10 blur-[100px] dark:blur-[120px] animate-blob transition-colors duration-700"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[50%] rounded-full bg-purple-300/30 dark:bg-purple-600/10 blur-[100px] dark:blur-[120px] animate-blob transition-colors duration-700" style="animation-delay: 4s;"></div>
     </div>
 
-    <!-- Sticky Navigation Hub Header -->
     <header class="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 transition-colors duration-500">
-        <div class="px-4 py-3.5 flex justify-between items-center max-w-2xl mx-auto w-full">
-            <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-all shadow-sm">
-                <i data-lucide="languages" class="w-4 h-4 mr-1.5 ltr-mr"></i>
-                <span id="lang-text">EN</span>
+        <div class="px-4 py-3.5 flex justify-between items-center max-w-4xl mx-auto w-full">
+            <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 transition-all shadow-sm">
+                <i data-lucide="languages" class="w-4 h-4 mr-1.5 ltr-mr"></i><span id="lang-text">EN</span>
             </button>
             <div class="text-center">
                 <h1 id="app-title" class="text-sm font-black tracking-wide text-slate-900 dark:text-white uppercase font-kurdish">بەڕێوەبردنی زانکۆ</h1>
                 <p id="app-subtitle" class="text-[11px] font-bold text-brand-600 dark:text-brand-400 mt-0.5 font-kurdish">خشتە و تاقیکردنەوەکان</p>
             </div>
-            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex items-center justify-center text-amber-500 shadow-sm hover:scale-105 active:scale-95 transition-all">
-                <i id="theme-icon" data-lucide="sun" class="w-5 h-5"></i>
+            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-white/5 flex items-center justify-center text-amber-500 shadow-sm hover:scale-105 transition-all">
+                <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Responsive Body -->
-    <main class="flex-grow w-full max-w-2xl mx-auto px-4 pt-6 flex flex-col gap-6">
+    <main class="flex-grow w-full max-w-5xl mx-auto px-4 pt-6 flex flex-col gap-6">
 
-        <!-- LED Hero (Latest Announcement) -->
-        <section id="announcement-hero" class="w-full relative z-10 hidden">
+        <section id="announcement-hero" class="w-full max-w-2xl mx-auto relative z-10 hidden">
             <div class="led-border-window rounded-[2rem] bg-white/80 dark:bg-slate-950/80 p-[3px] shadow-xl dark:shadow-[0_0_40px_rgba(59,130,246,0.15)] transition-colors duration-500">
                 <div class="led-border-inner rounded-[1.85rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-3xl p-5 sm:p-6 flex flex-col gap-3 transition-colors duration-500">
                     <div class="flex items-center justify-between">
@@ -134,17 +115,13 @@
                     <div class="mt-1">
                         <h2 id="hero-title" class="text-base sm:text-lg font-black font-kurdish text-slate-900 dark:text-white leading-snug">...</h2>
                         <p id="hero-desc" class="text-sm text-slate-600 dark:text-slate-400 mt-2 font-kurdish leading-relaxed">...</p>
-                        <div class="flex items-center justify-end gap-2 mt-3 text-slate-500 dark:text-slate-500 text-xs font-bold">
-                            <span id="hero-date">...</span>
-                            <i data-lucide="calendar-clock" class="w-3.5 h-3.5 text-slate-400"></i>
-                        </div>
+                        <div class="flex items-center justify-end gap-2 mt-3 text-slate-500 text-xs font-bold"><span id="hero-date">...</span><i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Navigation Tabs -->
-        <section class="grid grid-cols-4 p-1.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-500">
+        <section class="max-w-3xl mx-auto w-full grid grid-cols-4 p-1.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm transition-colors duration-500">
             <button onclick="switchTab('Schedules')" id="tab-Schedules" class="active-pill py-2.5 text-center text-[10px] sm:text-xs font-bold font-kurdish rounded-xl transition-all duration-300">
                 <i data-lucide="layout-grid" class="w-4 h-4 mx-auto mb-1"></i><span data-i18n="schedules">خشتەکان</span>
             </button>
@@ -159,450 +136,560 @@
             </button>
         </section>
 
-        <!-- Dynamic Filters (Only show for schedules and exams) -->
-        <section id="filter-section" class="flex flex-col gap-3">
-            <!-- Search -->
-            <div class="relative group">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl-icon">
-                    <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
+        <section id="filter-section" class="flex flex-col gap-3 max-w-4xl mx-auto w-full">
+            <div class="flex gap-3">
+                <div class="relative group flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl-icon">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
+                    </div>
+                    <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="گەڕان..." class="block w-full pr-4 pl-12 py-3 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-brand-500/50 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white font-kurdish rtl-input" onkeyup="renderData()">
                 </div>
-                <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="گەڕان..." 
-                    class="block w-full pr-4 pl-12 py-3 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-brand-500/50 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white font-kurdish rtl-input"
-                    onkeyup="renderData()">
+                <!-- Dynamic Dropdown Filter -->
+                <select id="filter-teacher" onchange="renderData()" class="block w-1/3 px-3 py-3 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
+                    <option value="" id="filter-teacher-label">All Teachers & Subjects</option>
+                </select>
             </div>
-            
-            <!-- Dropdown Filters -->
-            <div class="grid grid-cols-2 gap-3" id="dropdown-filters">
-                <select id="filter-day" onchange="renderData()" class="block w-full px-3 py-2.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
-                    <option value="" data-i18n="all_days">هەموو ڕۆژەکان</option>
-                    <option value="Sunday" data-i18n="sun">یەکشەممە</option>
-                    <option value="Monday" data-i18n="mon">دووشەممە</option>
-                    <option value="Tuesday" data-i18n="tue">سێشەممە</option>
-                    <option value="Wednesday" data-i18n="wed">چوارشەممە</option>
-                    <option value="Thursday" data-i18n="thu">پێنجشەممە</option>
-                </select>
-                <select id="filter-stage" onchange="renderData()" class="block w-full px-3 py-2.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-300 font-kurdish appearance-none">
-                    <option value="" data-i18n="all_stages">هەموو قۆناغەکان</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
+
+            <!-- Pill Filters -->
+            <div id="pill-filters-container" class="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl p-3 md:p-4 flex flex-col gap-3 transition-all duration-300">
+                <div id="row-day" class="flex items-start sm:items-center gap-2 flex-wrap">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">DAY</span>
+                    <div id="day-pills" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div id="filter-divider" class="w-full h-px bg-slate-200 dark:bg-slate-700"></div>
+                <div id="row-stage" class="flex items-start sm:items-center gap-2 flex-wrap">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">STAGE</span>
+                    <div id="stage-pills" class="flex flex-wrap gap-2"></div>
+                    
+                    <div id="row-group-container" class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center ml-2 sm:ml-6 rtl-ml">GROUP</span>
+                        <div id="group-pills" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+                <!-- Semester Filter specifically for Calendar -->
+                <div id="row-semester" class="hidden items-start sm:items-center gap-2 flex-wrap">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">SEMESTER</span>
+                    <div id="semester-pills" class="flex flex-wrap gap-2"></div>
+                </div>
             </div>
         </section>
 
-        <!-- Loading State -->
         <div id="loading-indicator" class="py-12 flex flex-col items-center justify-center">
-            <div class="loader mb-4"></div>
-            <p class="text-sm font-kurdish text-slate-500 dark:text-slate-400 font-bold" data-i18n="loading">چاوەڕێ بن...</p>
+            <div class="loader mb-4"></div><p class="text-sm font-kurdish text-slate-500 font-bold" data-i18n="loading">چاوەڕێ بن...</p>
         </div>
 
-        <!-- Render Target for Cards -->
-        <section id="data-render-target" class="flex flex-col gap-4 hidden">
-            <!-- Dynamically injected cards -->
-        </section>
-
-    </main>
-
-    <!-- Footer reference -->
-    <footer class="mt-8 mb-6 relative">
-        <div class="text-center text-[10px] text-slate-400 dark:text-slate-500 font-sans font-medium">
-            <span data-i18n="ref_text">Data referenced from</span> <span class="font-mono font-bold text-brand-500">Schedule 2026-2027.xlsx</span>
+        <!-- Exportable Wrapper with padding for whitespace around tables -->
+        <div id="export-wrapper" class="w-full transition-all duration-300 rounded-2xl">
+            <!-- Dynamic Document Title (Editable by Admin) -->
+            <h2 id="doc-title-header" class="editable-title text-center font-bold text-slate-800 dark:text-slate-200 text-sm mb-4 hidden px-4 py-2 mx-auto" onclick="editTitle(this)" title="Click to edit if Admin"></h2>
+            <section id="grid-render-target" class="w-full overflow-hidden animate-card hidden bg-white dark:bg-[#0f172a] p-2 rounded-2xl"></section>
         </div>
-        <!-- Hidden Admin Gateway -->
-        <div class="absolute bottom-0 right-4 cursor-pointer opacity-30 hover:opacity-100 transition-opacity p-2" onclick="openAdminLogin()">
-            <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
-        </div>
+        
+        <section id="data-render-target" class="flex flex-col gap-4 max-w-2xl mx-auto w-full hidden"></section>
+
+        <!-- Export Buttons -->
+        <div id="export-controls" class="hidden flex flex-wrap gap-3 justify-center mt-2 max-w-4xl mx-auto w-full animate-card pb-10">
+        </button>
     </footer>
 
-    <!-- Admin Login Modal -->
+    <!-- Admin Login -->
     <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 hidden flex-col items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-slate-200 dark:border-slate-700 animate-card">
-            <h3 class="font-bold text-lg mb-4 text-center text-slate-800 dark:text-white font-kurdish">چوونە ژوورەوەی بەڕێوەبەر</h3>
-            <input type="password" id="admin-pass" placeholder="Password (admin123)" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 mb-4 text-center text-black dark:text-white">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-slate-200 dark:border-slate-700">
+            <h3 class="font-bold text-lg mb-4 text-center">Admin Login</h3>
+            <input type="password" id="admin-pass" placeholder="Password (admin123)" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-4 py-2.5 mb-4 text-center">
             <div class="flex gap-3">
-                <button onclick="closeAdminLogin()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm hover:opacity-90 transition-opacity font-kurdish">داخستن</button>
-                <button onclick="verifyAdmin()" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:opacity-90 transition-opacity font-kurdish">چوونەژوورەوە</button>
+                <button onclick="closeAdminLogin()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="verifyAdmin()" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm">Login</button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Cell Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-50 hidden flex-col items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-slate-200 dark:border-slate-700 animate-card">
-            <h3 class="font-bold text-lg mb-1 text-slate-800 dark:text-white font-kurdish" id="edit-title">دەستکاریکردن</h3>
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+            <h3 class="font-bold text-lg mb-1 flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-brand-500"></i> Edit Record</h3>
             <p class="text-xs text-slate-500 mb-4 font-mono" id="edit-meta"></p>
-            
-            <textarea id="edit-input" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 mb-4 text-black dark:text-white resize-none h-24 font-kurdish" dir="auto"></textarea>
-            
-            <label class="flex items-center gap-2 mb-5 cursor-pointer text-sm text-slate-700 dark:text-slate-300 font-kurdish">
-                <input type="checkbox" id="edit-notify" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 bg-slate-100 dark:bg-slate-800">
-                <span data-i18n="notify_email">ناردنی ئیمەیڵ بۆ خوێندکاران</span>
-            </label>
-
-            <div class="flex gap-3">
-                <button onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm hover:opacity-90 transition-opacity font-kurdish">پاشگەزبوونەوە</button>
-                <button onclick="saveEdit()" id="save-btn" class="flex-1 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm hover:opacity-90 transition-opacity font-kurdish flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-4 h-4"></i> پاشەکەوت
-                </button>
+            <div id="dynamic-edit-fields" class="flex flex-col gap-3 mb-4 overflow-y-auto px-1 py-2 custom-scroll flex-grow"></div>
+            <div class="flex gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="saveRowEdit()" id="save-btn" class="flex-1 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm flex justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] transition-all duration-300 opacity-0 translate-y-10 pointer-events-none flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-full shadow-2xl font-kurdish font-bold text-sm">
-        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 dark:text-green-600" id="toast-icon"></i>
-        <span id="toast-msg">سەرکەوتوو بوو!</span>
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 opacity-0 translate-y-10 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-full shadow-2xl font-bold text-sm">
+        <i data-lucide="check-circle-2" class="w-5 h-5" id="toast-icon"></i><span id="toast-msg">Success</span>
     </div>
 
 <script>
-    // ==========================================
-    // CONFIGURATION
-    // ==========================================
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwRSAJexrtxR37RMNVH0TLkkS7L3iAaVS__AQYx5iFc9Uncl6FjaqtfXdIGHdGpcQHhYw/exec"; // <--- REPLACE WITH YOUR NEW WEB APP URL
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzok2ZaUVT0u2EdT6P8SlWPU_VKb8trgCPHiUJ0uquJ5D6g9sOpGYXXvXymkRmiSScijw/exec"; 
 
-    // Application State
     let state = {
-        lang: 'ku',
-        activeTab: 'Schedules',
-        isAdmin: false,
+        lang: 'ku', activeTab: 'Schedules', isAdmin: false,
         data: { Schedules: [], Exams: [], Calendar: [], Announcements: [] },
-        editContext: null
+        sheetNames: {}, editContext: null, docTitles: {},
+        filters: { day: null, stage: null, group: null, semester: null }
     };
 
-    // Dictionary
     const dict = {
-        ku: {
-            title: "بەڕێوەبردنی زانکۆ", subtitle: "خشتە و تاقیکردنەوەکان",
-            schedules: "خشتەکان", exams: "تاقیکردنەوە", calendar: "ڕۆژژمێر", announcements: "ئاگاداری",
-            search_placeholder: "گەڕان...", all_days: "هەموو ڕۆژەکان", all_stages: "هەموو قۆناغەکان",
-            loading: "چاوەڕێ بن دەهێنرێت...", ref_text: "سەرچاوەی داتا:",
-            sun: "یەکشەممە", mon: "دووشەممە", tue: "سێشەممە", wed: "چوارشەممە", thu: "پێنجشەممە",
-            latest_news: "نوێترین ئاگاداری", notify_email: "ناردنی ئیمەیڵی ئاگادارکردنەوە",
-            no_data: "هیچ زانیارییەک نەدۆزرایەوە", err_fetch: "هەڵە لە هێنانی داتا"
-        },
-        en: {
-            title: "Uni Management", subtitle: "Schedules & Exams",
-            schedules: "Schedules", exams: "Exams", calendar: "Calendar", announcements: "News",
-            search_placeholder: "Search...", all_days: "All Days", all_stages: "All Stages",
-            loading: "Loading data...", ref_text: "Data referenced from",
-            sun: "Sunday", mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday",
-            latest_news: "Latest News", notify_email: "Send notification email",
-            no_data: "No records found", err_fetch: "Failed to load data"
-        }
+        ku: { title: "بەڕێوەبردنی زانکۆ", subtitle: "خشتە و تاقیکردنەوەکان", schedules: "خشتەکان", exams: "تاقیکردنەوە", calendar: "ڕۆژژمێر", announcements: "ئاگاداری", all_teachers: "هەموو مامۆستاکان", all_subjects: "هەموو بابەتەکان", filter_table: "پاڵاوتنی خشتەکە", loading: "چاوەڕێ بن..." },
+        en: { title: "Uni Management", subtitle: "Schedules & Exams", schedules: "Schedules", exams: "Exams", calendar: "Calendar", announcements: "News", all_teachers: "All Teachers & Subjects", all_subjects: "All Subjects", filter_table: "Filter the table", loading: "Loading data..." }
     };
 
-    // DOM Setup
-    document.addEventListener('DOMContentLoaded', () => {
-        syncTheme();
-        applyLocalization();
-        lucide.createIcons();
-        fetchData();
-    });
+    document.addEventListener('DOMContentLoaded', () => { applyLocalization(); lucide.createIcons(); fetchData(); });
 
-    // ==========================================
-    // API & DATA HANDLING
-    // ==========================================
     async function fetchData() {
-        document.getElementById('loading-indicator').classList.remove('hidden');
-        document.getElementById('data-render-target').classList.add('hidden');
+        const cached = localStorage.getItem('uni_data_cache');
+        if (cached) {
+            try { const parsed = JSON.parse(cached); state.data = parsed.data; state.sheetNames = parsed.sheetNames; if(parsed.docTitles) state.docTitles = parsed.docTitles; populateFilters(); renderData(); } catch(e) {}
+        } else { document.getElementById('loading-indicator').classList.remove('hidden'); }
         
         try {
-            if(GAS_URL === "https://script.google.com/macros/s/AKfycbwRSAJexrtxR37RMNVH0TLkkS7L3iAaVS__AQYx5iFc9Uncl6FjaqtfXdIGHdGpcQHhYw/exec") {
-                showToast("Please set the GAS_URL in HTML code.", "alert-triangle", "red");
-                return;
-            }
-            const res = await fetch(`${GAS_URL}?action=getAllData`);
+            // Append timestamp to bypass browser cache and get immediate sheet updates
+            const res = await fetch(`${GAS_URL}?action=getAllData&t=${new Date().getTime()}`);
             const json = await res.json();
+            if(json.error) throw new Error(json.error);
+            state.data = { Schedules: json.schedules||[], Exams: json.exams||[], Calendar: json.calendar||[], Announcements: json.announcements||[] };
+            state.sheetNames = json.sheetNames || {};
+            state.docTitles = json.docTitles || state.docTitles;
+            localStorage.setItem('uni_data_cache', JSON.stringify({data: state.data, sheetNames: state.sheetNames, docTitles: state.docTitles}));
             
-            if (json.error) throw new Error(json.error);
-            
-            state.data = json;
-            updateHeroAnnouncement();
-            renderData();
-            
-        } catch (err) {
-            console.error(err);
-            showToast(dict[state.lang].err_fetch, 'x-circle', 'red');
-        } finally {
-            document.getElementById('loading-indicator').classList.add('hidden');
-            document.getElementById('data-render-target').classList.remove('hidden');
+            populateFilters(); renderData();
+        } catch (err) { console.error(err); showToast('Failed to load data', 'x-circle', 'red'); } 
+        finally { document.getElementById('loading-indicator').classList.add('hidden'); }
+    }
+
+    function editTitle(element) {
+        if(!state.isAdmin) return;
+        const currentTitle = element.innerText;
+        const newTitle = prompt("Edit Document Title:", currentTitle);
+        if (newTitle && newTitle.trim() !== "" && newTitle !== currentTitle) {
+            element.innerText = newTitle;
+            state.docTitles[state.activeTab] = newTitle;
+            showToast("Saving title...", "loader", "brand");
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'updateTitle', tab: state.activeTab, title: newTitle }) })
+                .then(() => { showToast("Title Saved!", "check", "green"); fetchData(); });
         }
     }
 
-    function updateHeroAnnouncement() {
-        const hero = document.getElementById('announcement-hero');
-        const list = state.data.Announcements || [];
-        if (list.length > 0) {
-            const latest = list[list.length - 1]; // Assume last is newest
-            hero.classList.remove('hidden');
-            document.getElementById('hero-title').innerText = latest.Title || "Announcement";
-            document.getElementById('hero-desc').innerText = latest.Message || "";
-            document.getElementById('hero-date').innerText = latest.Date || "";
-        } else {
-            hero.classList.add('hidden');
+    function populateFilters() {
+        const items = state.data[state.activeTab] || [];
+        
+        let days = new Set(), stages = new Set(), groups = new Set(), sems = new Set(), teachSubj = new Set();
+        
+        items.forEach(i => {
+            if (i.Day && i.Day !== '-') days.add(i.Day.trim());
+            if (i.Stage && i.Stage !== '-') stages.add(i.Stage.toString().trim());
+            if (i.Group && i.Group !== '-') groups.add(i.Group.toString().trim());
+            if (i.Semester) sems.add(i.Semester);
+            
+            // Dropdown logic based on active tab
+            if (state.activeTab === 'Schedules') {
+                if (i.Teacher && i.Teacher !== '-') teachSubj.add(i.Teacher.trim());
+                if (i.Subject && i.Subject !== '-') teachSubj.add(i.Subject.trim());
+            } else if (state.activeTab === 'Exams') {
+                // Only subjects for Exams
+                if (i.Y1_Subj && i.Y1_Subj !== '-') teachSubj.add(i.Y1_Subj.trim());
+                if (i.Y2_Subj && i.Y2_Subj !== '-') teachSubj.add(i.Y2_Subj.trim());
+                if (i.Y3_Subj && i.Y3_Subj !== '-') teachSubj.add(i.Y3_Subj.trim());
+                if (i.Y4_Subj && i.Y4_Subj !== '-') teachSubj.add(i.Y4_Subj.trim());
+                ['1','2','3','4'].forEach(s => stages.add(s)); // Force populating Stage pills
+            } else if (state.activeTab === 'Calendar') {
+                // Only subjects for Calendar
+                if (i.Subject && i.Subject !== '-') teachSubj.add(i.Subject.trim());
+            }
+        });
+
+        // Setup Pills
+        const dayOrder = { "Sunday":1, "Monday":2, "Tuesday":3, "Wednesday":4, "Thursday":5, "یەکشەممە":1, "دووشەممە":2, "سێشەممە":3, "چوارشەممە":4, "پێنجشەممە":5 };
+        renderPills('day', Array.from(days).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99)));
+        renderPills('stage', Array.from(stages).sort((a,b) => a.localeCompare(b, undefined, {numeric: true})));
+        renderPills('group', Array.from(groups).sort());
+        renderPills('semester', Array.from(sems).sort());
+
+        // Setup Dropdown Placeholder Text
+        const lbl = document.getElementById('filter-teacher-label');
+        if(state.activeTab === 'Schedules') lbl.innerText = dict[state.lang].all_teachers || "All Teachers & Subjects";
+        else if(state.activeTab === 'Exams') lbl.innerText = dict[state.lang].all_subjects || "All Subjects";
+        else if(state.activeTab === 'Calendar') lbl.innerText = dict[state.lang].filter_table || "Filter the table";
+
+        // Setup Dropdown Options
+        const sel = document.getElementById('filter-teacher');
+        if (sel) {
+            const current = sel.value;
+            let html = `<option value="">${lbl.innerText}</option>`;
+            Array.from(teachSubj).sort().forEach(opt => html += `<option value="${opt}">${opt}</option>`);
+            sel.innerHTML = html; sel.value = current;
         }
     }
+
+    function renderPills(type, options) {
+        const container = document.getElementById(`${type}-pills`);
+        if(!container) return;
+        let html = '';
+        const isAll = state.filters[type] === null;
+        const active = "bg-brand-500 text-white shadow-md border-brand-600";
+        const inactive = "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50";
+        
+        html += `<button onclick="setFilter('${type}', null)" class="px-3 py-1 rounded-lg border text-xs font-bold transition-all ${isAll ? active : inactive}">All</button>`;
+        options.forEach(opt => {
+            const isAct = state.filters[type] === opt;
+            html += `<button onclick="setFilter('${type}', '${opt}')" class="px-3 py-1 rounded-lg border text-xs font-bold transition-all ${isAct ? active : inactive}">${opt}</button>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function setFilter(type, val) { state.filters[type] = state.filters[type] === val ? null : val; populateFilters(); renderData(); }
 
     function renderData() {
         const target = document.getElementById('data-render-target');
-        target.innerHTML = '';
+        const gridTarget = document.getElementById('grid-render-target');
+        const exportCtrls = document.getElementById('export-controls');
+        
+        target.innerHTML = ''; gridTarget.innerHTML = '';
         
         const q = document.getElementById('search-input').value.toLowerCase();
-        const fDay = document.getElementById('filter-day').value;
-        const fStage = document.getElementById('filter-stage').value;
+        const fTeach = document.getElementById('filter-teacher') ? document.getElementById('filter-teacher').value : '';
         
         let items = state.data[state.activeTab] || [];
         
-        // Filtering logic
+        // Setup the specific dynamic document title based on Active Tab
+        const docTitleHeader = document.getElementById('doc-title-header');
+        docTitleHeader.innerText = state.docTitles[state.activeTab] || "Schedule Document";
+        
+        // Universal Text/Teacher Filtering
         items = items.filter(item => {
             let match = true;
-            // Search
-            if (q) {
-                const textDump = Object.values(item).join(' ').toLowerCase();
-                if (!textDump.includes(q)) match = false;
+            if (q) { const dump = Object.values(item).join(' ').toLowerCase(); if (!dump.includes(q)) match = false; }
+            if (fTeach) {
+                const vals = Object.values(item);
+                if (!vals.some(v => typeof v === 'string' && v.trim() === fTeach)) match = false;
             }
-            // Dropdowns (only apply if the data has these properties)
-            if (fDay && item.Day && item.Day.toLowerCase() !== fDay.toLowerCase()) match = false;
-            if (fStage && item.Stage && item.Stage.toString() !== fStage) match = false;
             return match;
         });
 
         if (items.length === 0) {
-            target.innerHTML = `
-                <div class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-md rounded-2xl p-10 text-center animate-card border border-slate-200 dark:border-white/5">
-                    <i data-lucide="folder-open" class="w-10 h-10 text-slate-400 mx-auto mb-3 opacity-50"></i>
-                    <p class="font-kurdish font-bold text-slate-500">${dict[state.lang].no_data}</p>
-                </div>`;
-            lucide.createIcons();
+            target.classList.remove('hidden'); gridTarget.classList.add('hidden'); exportCtrls.classList.add('hidden');
+            target.innerHTML = `<div class="bg-white/60 p-10 text-center rounded-2xl border"><p class="font-bold text-slate-500">No records found</p></div>`;
             return;
         }
 
-        // Render Cards based on Tab
-        items.forEach((item, index) => {
-            const card = document.createElement('div');
-            card.className = "bg-white/60 dark:bg-slate-900/30 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-sm rounded-[1.5rem] p-4.5 animate-card hover:bg-white/90 dark:hover:bg-slate-800/40 transition-all duration-300 group";
-            card.style.animationDelay = `${index * 0.05}s`;
-            
-            let contentHTML = '<div class="grid gap-2 text-sm">';
-            
-            // Render object keys as rows (skip _row metadata)
-            let colIndex = 1; // 1-based index for Google Sheets Columns
-            for (const [key, val] of Object.entries(item)) {
-                if (key === '_row') continue;
+        // View Routing
+        if (state.activeTab === 'Schedules') {
+            target.classList.add('hidden'); gridTarget.classList.remove('hidden'); exportCtrls.classList.remove('hidden');
+            renderScheduleGrid(state.data.Schedules, items, gridTarget); 
+        } else if (state.activeTab === 'Exams') {
+            target.classList.add('hidden'); gridTarget.classList.remove('hidden'); exportCtrls.classList.remove('hidden');
+            renderExamsGrid(items, gridTarget);
+        } else if (state.activeTab === 'Calendar') {
+            target.classList.add('hidden'); gridTarget.classList.remove('hidden'); exportCtrls.classList.remove('hidden');
+            renderCalendarGrid(items, gridTarget);
+        } else {
+            gridTarget.classList.add('hidden'); target.classList.remove('hidden'); exportCtrls.classList.add('hidden');
+            renderStandardCards(items, target);
+        }
+        lucide.createIcons();
+    }
+
+    const palette = ['bg-[#cffafe] dark:bg-[#164e63]', 'bg-[#fef08a] dark:bg-[#713f12]', 'bg-[#fed7aa] dark:bg-[#7c2d12]', 'bg-[#e9d5ff] dark:bg-[#581c87]', 'bg-[#bbf7d0] dark:bg-[#14532d]', 'bg-[#fbcfe8] dark:bg-[#831843]', 'bg-[#e0e7ff] dark:bg-[#312e81]', 'bg-[#fecaca] dark:bg-[#7f1d1d]'];
+    let colorMap = {}; let cIdx = 0;
+    function getSubjColor(subject) {
+        if (!subject || subject === '-') return 'bg-white dark:bg-slate-900/40 text-slate-400';
+        const key = subject.trim().toLowerCase();
+        if (!colorMap[key]) { colorMap[key] = palette[cIdx % palette.length]; cIdx++; }
+        return colorMap[key] + ' text-slate-800 dark:text-white';
+    }
+    function getStageColor(stage) {
+        const s = String(stage).trim();
+        if (s === '1') return 'bg-[#fef08a] dark:bg-yellow-600/50';
+        if (s === '2') return 'bg-[#bae6fd] dark:bg-sky-600/50';
+        if (s === '3') return 'bg-[#bbf7d0] dark:bg-green-600/50';
+        if (s === '4') return 'bg-[#e9d5ff] dark:bg-purple-600/50';
+        return 'bg-slate-200 dark:bg-slate-700';
+    }
+
+    function renderScheduleGrid(allData, filteredItems, container) {
+        document.getElementById('doc-title-header').classList.remove('hidden');
+        const fDay = state.filters.day; const fStage = state.filters.stage; const fGroup = state.filters.group;
+        filteredItems = filteredItems.filter(i => {
+            if(fDay && i.Day !== fDay) return false;
+            if(fStage && String(i.Stage) !== fStage) return false;
+            if(fGroup && String(i.Group) !== fGroup) return false;
+            return true;
+        });
+
+        let days = new Set(), times = new Set(), colsMap = new Map();
+        filteredItems.forEach(i => { days.add(i.Day); times.add(i.Time); colsMap.set(`${i.Stage}-${i.Group}`, {stage: i.Stage, group: i.Group}); });
+
+        const dayOrder = { "Sunday":1, "Monday":2, "Tuesday":3, "Wednesday":4, "Thursday":5, "یەکشەممە":1, "دووشەممە":2, "سێشەممە":3, "چوارشەممە":4, "پێنجشەممە":5 };
+        let sortedDays = Array.from(days).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99));
+        let sortedTimes = Array.from(times).sort(); 
+        let columns = Array.from(colsMap.values()).sort((a,b) => {
+            if(a.stage !== b.stage) return String(a.stage).localeCompare(String(b.stage), undefined, {numeric:true});
+            return String(a.group).localeCompare(String(b.group));
+        });
+
+        if(columns.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+
+        let html = `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-left"><thead><tr>`;
+        html += `<th class="w-12 bg-slate-100 dark:bg-slate-800 text-xs text-center border-b-[3px] border-r-[3px]">Day</th><th class="w-24 bg-slate-100 dark:bg-slate-800 text-xs text-center border-b-[3px]">Time</th>`;
+        columns.forEach(col => { html += `<th colspan="2" class="p-2 text-center text-sm border-b-[3px] text-slate-800 dark:text-white ${getStageColor(col.stage)}">Stage ${col.stage} (${col.group})</th>`; });
+        html += `</tr></thead><tbody>`;
+
+        sortedDays.forEach(day => {
+            const dayTimes = sortedTimes.filter(time => filteredItems.some(i => i.Day === day && i.Time === time));
+            if(dayTimes.length === 0) return;
+
+            dayTimes.forEach((time, tIndex) => {
+                html += `<tr>`;
+                if(tIndex === 0) { 
+                    // Fixed vertical text rendering structurally for html2canvas
+                    html += `<td rowspan="${dayTimes.length}" class="bg-slate-50 dark:bg-slate-800 border-b-[3px] border-r-[3px] border-slate-300 dark:border-slate-600">
+                                <div class="vertical-text-container"><div class="vertical-text">${day}</div></div>
+                             </td>`; 
+                }
+                html += `<td class="bg-slate-50 dark:bg-slate-800/50 p-2 text-xs font-semibold text-center whitespace-nowrap">${time}</td>`;
                 
-                const displayVal = val || '-';
-                // Admin Edit Button UI injection
-                const editBtn = `<button onclick="openEdit('${state.activeTab}', ${item._row}, ${colIndex}, '${key}', \`${displayVal.replace(/`/g, "\\`")}\`)" class="admin-edit-btn w-6 h-6 rounded-lg bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center hover:bg-brand-200 dark:hover:bg-brand-800 transition-colors mr-2 rtl-ml absolute left-2 top-1/2 -translate-y-1/2"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>`;
-
-                contentHTML += `
-                    <div class="flex items-start justify-between border-b border-slate-100 dark:border-white/5 pb-2 last:border-0 last:pb-0 relative">
-                        <span class="text-slate-500 dark:text-slate-400 text-xs font-bold pt-1 min-w-[80px]">${key}</span>
-                        <div class="font-kurdish font-medium text-slate-800 dark:text-slate-100 flex-grow text-right pr-2 rtl-pl pl-8 rtl-pr">
-                            ${displayVal}
-                            ${editBtn}
-                        </div>
-                    </div>`;
-                colIndex++;
-            }
-            contentHTML += '</div>';
-            card.innerHTML = contentHTML;
-            target.appendChild(card);
+                columns.forEach(col => {
+                    const rec = filteredItems.find(i => i.Day === day && i.Time === time && i.Stage == col.stage && i.Group == col.group);
+                    if(rec) {
+                        const cls = getSubjColor(rec.Subject);
+                        const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Schedules', '${rec._id}')" class="admin-edit-btn absolute top-1 right-1 bg-white/90 p-1 rounded text-brand-600 shadow-sm"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
+                        html += `<td class="${cls} p-2 text-xs font-bold text-center relative group min-w-[120px]">${rec.Subject} ${eBtn}</td>`;
+                        html += `<td class="${cls} p-2 text-xs font-medium text-center border-l-0 min-w-[90px]">${rec.Teacher}</td>`;
+                    } else {
+                        html += `<td class="bg-white dark:bg-[#0f172a]"></td><td class="bg-white dark:bg-[#0f172a]"></td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
         });
-
-        lucide.createIcons();
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
     }
 
-    // ==========================================
-    // UI INTERACTIONS & THEME
-    // ==========================================
-    function switchTab(tabName) {
-        state.activeTab = tabName;
+    function renderExamsGrid(items, container) {
+        document.getElementById('doc-title-header').classList.remove('hidden');
+        const fDay = state.filters.day; const fStage = state.filters.stage;
+        let data = items.filter(i => {
+            if(fDay && i.Day !== fDay) return false;
+            // specific exam stage filtering
+            if(fStage) { const sub = i[`Y${fStage}_Subj`]; if(!sub || sub.trim() === '-') return false; }
+            return true;
+        });
+        if(data.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+
+        let html = `<div class="timetable-container custom-scroll" dir="ltr"><table id="export-target" class="timetable text-center"><thead><tr>`;
+        html += `<th class="w-10 bg-slate-100 dark:bg-slate-800 border-b-[3px]">No.</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Day</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Date</th>`;
         
-        ['Schedules', 'Exams', 'Calendar', 'Announcements'].forEach(t => {
-            const btn = document.getElementById(`tab-${t}`);
-            if (t === tabName) {
-                btn.classList.add('active-pill');
-                btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+        if (fStage) {
+            html += `<th class="bg-indigo-100 dark:bg-indigo-900/50 border-b-[3px]">Stage ${fStage} Subject</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Status</th>`;
+        } else {
+            html += `<th class="bg-yellow-100 dark:bg-yellow-900/50 border-b-[3px]">Stage 1</th><th class="bg-sky-100 dark:bg-sky-900/50 border-b-[3px]">Stage 2</th><th class="bg-green-100 dark:bg-green-900/50 border-b-[3px]">Stage 3</th><th class="bg-purple-100 dark:bg-purple-900/50 border-b-[3px]">Stage 4</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px]">Status</th>`;
+        }
+        html += `</tr></thead><tbody>`;
+
+        data.forEach((item, idx) => {
+            const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Exams', '${item._id}')" class="admin-edit-btn inline-block ml-2 bg-slate-200 dark:bg-slate-700 p-1 rounded text-brand-600"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
+            html += `<tr><td class="font-bold text-slate-400 text-xs">${idx+1} ${eBtn}</td><td class="text-sm font-medium">${item.Day}</td><td class="text-sm text-slate-500">${item.Date}</td>`;
+            
+            if (fStage) {
+                const sub = item[`Y${fStage}_Subj`]; const stat = item[`Y${fStage}_Stat`];
+                html += `<td class="text-sm font-bold">${sub||'-'}</td><td class="text-xs font-mono font-bold">${stat||'-'}</td>`;
             } else {
-                btn.classList.remove('active-pill');
-                btn.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+                let statuses = [item.Y1_Stat, item.Y2_Stat, item.Y3_Stat, item.Y4_Stat].filter(s => s && s.trim() !== "");
+                let allSame = statuses.every(s => s === statuses[0]);
+                let finalStatus = allSame && statuses.length > 0 ? statuses[0] : (statuses.length > 0 ? "Mixed Status" : "-");
+
+                html += `<td class="text-sm">${item.Y1_Subj||'-'}</td><td class="text-sm">${item.Y2_Subj||'-'}</td><td class="text-sm">${item.Y3_Subj||'-'}</td><td class="text-sm">${item.Y4_Subj||'-'}</td><td class="text-xs font-mono font-bold text-brand-600 dark:text-brand-400">${finalStatus}</td>`;
+            }
+            html += `</tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+
+    function getCalendarRowColor(subject) {
+        if(!subject) return "bg-white dark:bg-[#0f172a]";
+        const s = subject.trim();
+        if(s.includes("وانەخوێندن")) return "bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100";
+        if(s.includes("تاقیکردنەوەی کۆتایی")) return "bg-rose-200 dark:bg-rose-900/60 text-rose-900 dark:text-rose-100 font-bold";
+        if(s.includes("ئەنجام و پەڵپ")) return "bg-orange-100 dark:bg-orange-900/50 text-orange-900 dark:text-orange-100";
+        if(s.toLowerCase().includes("midterm") || s.includes("میدتێرم") || s.includes("تاقیکردنەوەی Midterm")) return "bg-purple-100 dark:bg-purple-900/50 text-purple-900 dark:text-purple-100";
+        return "bg-slate-50 dark:bg-[#0f172a]"; // default
+    }
+
+    function renderCalendarGrid(items, container) {
+        document.getElementById('doc-title-header').classList.remove('hidden');
+        const fSem = state.filters.semester;
+        let data = items.filter(i => { if(fSem && i.Semester !== fSem) return false; return true; });
+        if(data.length === 0) { container.innerHTML = "<p class='p-4 text-center'>No data matches filter.</p>"; return; }
+
+        let html = `<div class="timetable-container custom-scroll" dir="rtl"><table id="export-target" class="timetable text-right"><thead><tr>`;
+        html += `<th class="w-10 bg-slate-100 dark:bg-slate-800 text-center border-b-[3px]">No.</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px] text-center">Week</th><th class="bg-slate-100 dark:bg-slate-800 border-b-[3px] text-center">Date</th><th class="w-1/2 bg-slate-100 dark:bg-slate-800 border-b-[3px]">Bologna Subject</th>`;
+        html += `</tr></thead><tbody>`;
+
+        data.forEach((item, idx) => {
+            const eBtn = state.isAdmin ? `<button onclick="openRowEdit('Calendar', '${item._id}')" class="admin-edit-btn absolute left-2 top-2 bg-white/50 p-1 rounded text-brand-600"><i data-lucide="edit" class="w-3 h-3"></i></button>` : '';
+            const rowCls = getCalendarRowColor(item.Subject);
+            html += `<tr class="relative ${rowCls}"><td class="font-bold text-xs text-center border-slate-300 dark:border-slate-600">${idx+1}</td><td class="text-sm font-medium text-center border-slate-300 dark:border-slate-600">${item.Week}</td><td class="text-sm font-mono text-center border-slate-300 dark:border-slate-600">${item.Date}</td><td class="text-sm font-bold border-slate-300 dark:border-slate-600 relative">${item.Subject} ${eBtn}</td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+
+    function renderStandardCards(items, target) {
+        document.getElementById('doc-title-header').classList.add('hidden');
+        items.forEach((item, index) => {
+            const c = document.createElement('div');
+            c.className = "bg-white/60 dark:bg-slate-900/30 backdrop-blur-xl border border-slate-200 dark:border-white/5 shadow-sm rounded-2xl p-4 animate-card relative";
+            let h = '<div class="grid gap-2 text-sm">';
+            for (const [k, v] of Object.entries(item)) {
+                if (k.startsWith('_')) continue;
+                h += `<div class="flex justify-between border-b border-slate-100 dark:border-white/5 pb-2 last:border-0"><span class="text-slate-500 text-xs font-bold">${k}</span><span class="font-medium text-right">${v||'-'}</span></div>`;
+            }
+            c.innerHTML = h + '</div>'; target.appendChild(c);
+        });
+    }
+
+    async function getCanvas() {
+        const wrapper = document.getElementById('export-wrapper');
+        if(!wrapper) return null;
+        
+        wrapper.classList.add('exporting');
+        // temporarily enforce absolute light mode on wrapper for printing
+        const wasDark = document.documentElement.classList.contains('dark');
+        if(wasDark) document.documentElement.classList.remove('dark');
+        
+        // Allow DOM to apply padding and layout changes before capturing
+        await new Promise(r => setTimeout(r, 150));
+        
+        const canvas = await html2canvas(wrapper, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        
+        if(wasDark) document.documentElement.classList.add('dark');
+        wrapper.classList.remove('exporting');
+        return canvas;
+    }
+
+    async function exportGrid(type) {
+        showToast("Generating file...", "loader", "brand");
+        const canvas = await getCanvas();
+        if(!canvas) return;
+
+        if(type === 'png') {
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = `Schedule_${state.activeTab}.png`;
+            a.click();
+            showToast("PNG Downloaded", "check", "green");
+        } else if (type === 'pdf') {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            
+            // Calendar is Portrait, others Landscape
+            const orientation = state.activeTab === 'Calendar' ? 'p' : 'l';
+            const pdf = new jsPDF(orientation, 'pt', 'a4'); 
+            
+            const pdfW = pdf.internal.pageSize.getWidth() - 40; 
+            const pdfH = (canvas.height * pdfW) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 20, 20, pdfW, pdfH);
+            pdf.save(`Schedule_${state.activeTab}.pdf`);
+            showToast("PDF Downloaded", "check", "green");
+        }
+    }
+
+    async function shareGrid() {
+        const canvas = await getCanvas();
+        if(!canvas) return;
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], `Schedule_${state.activeTab}.png`, { type: "image/png" });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ title: "University Schedule", files: [file] });
+                } catch(e) { console.log(e); }
+            } else {
+                showToast("Sharing not supported on this browser.", "x", "red");
             }
         });
-
-        // Hide filters if on announcements/calendar
-        const filterSec = document.getElementById('filter-section');
-        if (tabName === 'Schedules' || tabName === 'Exams') filterSec.classList.remove('hidden');
-        else filterSec.classList.add('hidden');
-
-        renderData();
     }
 
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        const icon = document.getElementById('theme-icon');
-        
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-            document.getElementById('theme-color-meta').setAttribute('content', '#f8fafc');
-            icon.setAttribute('data-lucide', 'moon');
-        } else {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-color-meta').setAttribute('content', '#050B14');
-            icon.setAttribute('data-lucide', 'sun');
-        }
-        lucide.createIcons();
-    }
-
-    function toggleLanguage() {
-        state.lang = state.lang === 'ku' ? 'en' : 'ku';
-        applyLocalization();
-    }
-
-    function applyLocalization() {
-        const t = dict[state.lang];
-        
-        // HTML Direction
-        document.documentElement.dir = state.lang === 'ku' ? 'rtl' : 'ltr';
-        document.documentElement.lang = state.lang;
-        document.getElementById('lang-text').innerText = state.lang === 'ku' ? 'EN' : 'KU';
-
-        // Translate specific IDs
-        document.getElementById('app-title').innerText = t.title;
-        document.getElementById('app-subtitle').innerText = t.subtitle;
-        
-        // Data-i18n attributes
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (t[key]) el.innerText = t[key];
+    function switchTab(tab) {
+        state.activeTab = tab;
+        ['Schedules','Exams','Calendar','Announcements'].forEach(t => {
+            const b = document.getElementById(`tab-${t}`);
+            if(t===tab){ b.classList.add('active-pill'); b.classList.remove('text-slate-500'); }
+            else{ b.classList.remove('active-pill'); b.classList.add('text-slate-500'); }
         });
         
-        // Placeholders
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-i18n-placeholder');
-            if (t[key]) el.placeholder = t[key];
+        document.getElementById('row-stage').style.display = (tab==='Schedules'||tab==='Exams') ? 'flex' : 'none';
+        document.getElementById('row-day').style.display = (tab==='Schedules'||tab==='Exams') ? 'flex' : 'none';
+        document.getElementById('row-group-container').style.display = (tab==='Schedules') ? 'flex' : 'none'; // Only schedules have groups
+        document.getElementById('row-semester').style.display = (tab==='Calendar') ? 'flex' : 'none';
+        
+        populateFilters(); renderData();
+    }
+
+    function toggleTheme() { document.documentElement.classList.toggle('dark'); lucide.createIcons(); }
+    function toggleLanguage() { state.lang = state.lang === 'ku' ? 'en' : 'ku'; applyLocalization(); }
+    function applyLocalization() { /* Same as before, keeping short */ document.documentElement.dir = state.lang==='ku'?'rtl':'ltr'; document.getElementById('lang-text').innerText = state.lang==='ku'?'EN':'KU'; document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = dict[state.lang][el.getAttribute('data-i18n')] || el.innerText); }
+
+    function openAdminLogin() { if(state.isAdmin){state.isAdmin=false; document.body.classList.remove('admin-mode'); renderData(); return;} document.getElementById('admin-login-modal').classList.remove('hidden'); document.getElementById('admin-login-modal').classList.add('flex'); }
+    function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); document.getElementById('admin-login-modal').classList.remove('flex'); }
+    function verifyAdmin() { if(document.getElementById('admin-pass').value === 'admin123'){ state.isAdmin=true; document.body.classList.add('admin-mode'); closeAdminLogin(); renderData(); showToast("Admin Mode", "unlock", "green"); } }
+
+    function openRowEdit(sheet, id) {
+        const item = state.data[sheet].find(i => i._id == id); if(!item) return;
+        state.editContext = { sheet, id, original: {...item} };
+        const f = document.getElementById('dynamic-edit-fields'); f.innerHTML = '';
+        
+        // Handle specific parser column mappings for saving back to Sheet
+        let map = [];
+        if(sheet === 'Schedules') {
+            map = [ {col: item._subCol, key: 'Subject', val: item.Subject}, {col: item._teachCol, key: 'Teacher', val: item.Teacher} ];
+            document.getElementById('edit-meta').innerText = `Grid Row: ${item._row} | Day: ${item.Day} | Time: ${item.Time}`;
+        } else if (sheet === 'Exams') {
+            document.getElementById('edit-meta').innerText = `Sheet Row: ${item._row}`;
+            map = [ {col:1, key:'Day'}, {col:2, key:'Date'}, {col:3, key:'Y1_Subj'}, {col:4, key:'Y1_Stat'}, {col:5, key:'Y2_Subj'}, {col:6, key:'Y2_Stat'}, {col:7, key:'Y3_Subj'}, {col:8, key:'Y3_Stat'}, {col:9, key:'Y4_Subj'}, {col:10, key:'Y4_Stat'} ];
+        } else if (sheet === 'Calendar') {
+            document.getElementById('edit-meta').innerText = `Sheet Row: ${item._row}`;
+            map = [ {col:1, key:'Week'}, {col:2, key:'Date'}, {col:3, key:'Subject'} ];
+        }
+
+        map.forEach(m => {
+            const val = m.val !== undefined ? m.val : (item[m.key] || '');
+            f.innerHTML += `<div class="flex flex-col gap-1"><label class="text-xs font-bold text-slate-500">${m.key}</label><input type="text" data-col="${m.col}" data-key="${m.key}" value="${val}" class="w-full bg-slate-50 dark:bg-slate-800 border p-2 rounded text-sm outline-none"></div>`;
         });
 
-        // Toggle margins for icons based on direction
-        document.querySelectorAll('.ltr-mr').forEach(el => {
-            if(state.lang === 'ku') { el.classList.remove('mr-1.5'); el.classList.add('ml-1.5'); }
-            else { el.classList.add('mr-1.5'); el.classList.remove('ml-1.5'); }
+        document.getElementById('edit-modal').classList.remove('hidden'); document.getElementById('edit-modal').classList.add('flex');
+    }
+
+    function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); document.getElementById('edit-modal').classList.remove('flex'); }
+
+    async function saveRowEdit() {
+        if(!state.editContext) return;
+        const btn = document.getElementById('save-btn'); btn.innerHTML = 'Saving...'; btn.disabled = true;
+        const updates = [];
+        document.querySelectorAll('#dynamic-edit-fields input').forEach(input => {
+            const col = input.getAttribute('data-col'); const key = input.getAttribute('data-key');
+            if(state.editContext.original[key] != input.value) {
+                updates.push({ action: 'updateCell', sheetName: state.sheetNames[state.editContext.sheet] || state.editContext.sheet, row: state.editContext.original._row, col: parseInt(col), value: input.value });
+            }
         });
-    }
-
-    // ==========================================
-    // ADMIN FUNCTIONS
-    // ==========================================
-    function openAdminLogin() {
-        if(state.isAdmin) {
-            state.isAdmin = false;
-            document.body.classList.remove('admin-mode');
-            showToast("Logged out of Admin", "lock", "slate");
-            return;
-        }
-        document.getElementById('admin-login-modal').classList.remove('hidden');
-        document.getElementById('admin-login-modal').classList.add('flex');
-    }
-    
-    function closeAdminLogin() {
-        document.getElementById('admin-login-modal').classList.add('hidden');
-        document.getElementById('admin-login-modal').classList.remove('flex');
-        document.getElementById('admin-pass').value = '';
-    }
-
-    function verifyAdmin() {
-        const pass = document.getElementById('admin-pass').value;
-        if (pass === 'admin123') { // Simple client side block. GAS handles actual security if implemented.
-            state.isAdmin = true;
-            document.body.classList.add('admin-mode');
-            closeAdminLogin();
-            showToast("Admin Panel Unlocked", "unlock", "green");
-        } else {
-            showToast("Incorrect Password", "x-circle", "red");
-        }
-    }
-
-    function openEdit(sheet, row, colIndex, keyName, value) {
-        state.editContext = { sheet, row, col: colIndex, key: keyName };
-        document.getElementById('edit-title').innerText = `${dict[state.lang].schedules} > ${keyName}`;
-        document.getElementById('edit-meta').innerText = `Row: ${row} | Col: ${colIndex}`;
-        document.getElementById('edit-input').value = value === '-' ? '' : value;
-        
-        document.getElementById('edit-modal').classList.remove('hidden');
-        document.getElementById('edit-modal').classList.add('flex');
-    }
-
-    function closeEditModal() {
-        document.getElementById('edit-modal').classList.add('hidden');
-        document.getElementById('edit-modal').classList.remove('flex');
-        state.editContext = null;
-    }
-
-    async function saveEdit() {
-        if (!state.editContext) return;
-        
-        const btn = document.getElementById('save-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `<div class="loader w-4 h-4 border-[2px] mx-auto"></div>`;
-        btn.disabled = true;
-
-        const newVal = document.getElementById('edit-input').value;
-        const sendEmail = document.getElementById('edit-notify').checked;
 
         try {
-            // 1. Update Cell
-            const payload = {
-                action: 'updateCell',
-                sheetName: state.editContext.sheet,
-                row: state.editContext.row,
-                col: state.editContext.col,
-                value: newVal
-            };
-
-            await fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-
-            // 2. Send Notification if checked
-            if (sendEmail) {
-                await fetch(GAS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'sendNotification',
-                        subject: `Schedule Update: ${state.editContext.sheet}`,
-                        message: `The ${state.editContext.key} has been updated to: ${newVal}`,
-                        targetAudience: "all"
-                    })
-                });
-            }
-
-            // Success
-            showToast("Saved Successfully", "check-circle-2", "green");
-            closeEditModal();
-            fetchData(); // Refresh data
-
-        } catch (error) {
-            showToast("Failed to save", "x-circle", "red");
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
+            for(let p of updates) await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(p) });
+            showToast("Saved!", "check", "green"); closeEditModal(); fetchData();
+        } catch(e) { showToast("Error saving", "x", "red"); }
+        finally { btn.innerHTML = 'Save'; btn.disabled = false; }
     }
 
-    // Helper: Toast Notifications
-    function showToast(msg, icon = 'info', color = 'brand') {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        const iconEl = document.getElementById('toast-icon');
-        iconEl.setAttribute('data-lucide', icon);
-        
-        // Reset colors
-        iconEl.className = `w-5 h-5 text-${color}-500`;
+    function showToast(m, i, c) {
+        const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m;
+        document.getElementById('toast-icon').setAttribute('data-lucide', i);
+        t.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-full shadow-2xl font-bold text-sm text-${c}-500`;
+        setTimeout(() => t.classList.add('opacity-0', 'translate-y-10'), 3000);
         lucide.createIcons();
-
-        toast.classList.remove('opacity-0', 'translate-y-10');
-        setTimeout(() => toast.classList.add('opacity-0', 'translate-y-10'), 3000);
     }
 </script>
 </body>
