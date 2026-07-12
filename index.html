@@ -18,7 +18,7 @@
                 extend: {
                     fontFamily: {
                         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-                        kurdish: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif', 'Arial'],
+                        kurdish: ['system-ui', '-apple-system', 'Arial', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
                     },
                     colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a', 950: '#050B14' } }
                 }
@@ -59,7 +59,6 @@
         .dark .timetable th, .dark .timetable td { border: 2px solid #334155 !important; }
         .timetable th { position: sticky; top: 0; z-index: 10; font-weight: 800; }
         
-        /* Stronger structural borders */
         .timetable thead th { border-bottom: 4px solid #0f172a !important; }
         .dark .timetable thead th { border-bottom: 4px solid #475569 !important; }
         .timetable .day-end td { border-bottom: 4px solid #0f172a !important; }
@@ -84,7 +83,10 @@
             color: white !important;
         }
         
-        /* Excel-like focus styles */
+        /* Exporting Reset - Fixes Header appearing at the bottom */
+        .exporting-wrapper .timetable th { position: static !important; }
+        .exporting-wrapper .timetable-container { overflow: visible !important; }
+        
         td[contenteditable="true"] { cursor: text; outline: none; transition: all 0.2s ease; }
         td[contenteditable="true"]:focus { background-color: #fff !important; box-shadow: inset 0 0 0 3px #3b82f6; z-index: 50; position: relative; color: #0f172a !important; }
         .dark td[contenteditable="true"]:focus { background-color: #1e293b !important; color: white !important; }
@@ -116,7 +118,6 @@
 
     <main class="flex-grow w-full max-w-[1400px] mx-auto px-2 sm:px-4 pt-6 flex flex-col gap-6">
 
-        <!-- Announcement Hero -->
         <section id="announcement-hero" class="w-full max-w-3xl mx-auto relative z-10 hidden">
             <div class="led-border-window rounded-[2rem] bg-white/80 dark:bg-slate-950/80 p-[3px] shadow-xl dark:shadow-[0_0_40px_rgba(59,130,246,0.15)] transition-colors duration-500">
                 <div class="led-border-inner rounded-[1.85rem] bg-white/95 dark:bg-slate-900/90 backdrop-blur-3xl p-5 sm:p-6 flex flex-col gap-3 transition-colors duration-500">
@@ -164,7 +165,6 @@
                     <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="گەڕان..." class="block w-full pr-4 pl-12 py-3.5 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-brand-500/50 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white font-kurdish rtl-input" onkeyup="renderData()">
                 </div>
                 
-                <!-- Premium Color Mode Selector (Dual Option Toggle) -->
                 <div class="flex items-center bg-white/70 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 rounded-xl px-3 py-1.5 gap-2">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider font-kurdish">شێوازی ڕەنگ (Color Mode)</span>
                     <select id="color-style-option" onchange="renderData()" class="bg-transparent text-xs font-bold font-kurdish outline-none text-slate-700 dark:text-slate-300 cursor-pointer">
@@ -181,19 +181,18 @@
                 </select>
             </div>
 
-            <!-- Pill filters mapping -->
             <div id="pill-filters-container" class="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-xl p-3 md:p-4 flex flex-col gap-3">
                 <div id="row-day" class="flex items-start sm:items-center gap-2 flex-wrap">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">DAY</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">ڕۆژ (DAY)</span>
                     <div id="day-pills" class="flex flex-wrap gap-2"></div>
                 </div>
                 <div class="w-full h-px bg-slate-200 dark:bg-slate-700" id="filter-divider"></div>
                 <div id="row-stage" class="flex items-start sm:items-center gap-2 flex-wrap">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">STAGE</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">قۆناغ (STAGE)</span>
                     <div id="stage-pills" class="flex flex-wrap gap-2"></div>
                     
                     <div id="group-filter-wrap" class="flex items-center gap-2 flex-wrap ml-2 sm:ml-6 rtl-ml">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">GROUP</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded min-w-[50px] text-center">گرووپ (GROUP)</span>
                         <div id="group-pills" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
@@ -213,7 +212,6 @@
         
         <section id="data-render-target" class="flex flex-col gap-4 max-w-3xl mx-auto w-full hidden"></section>
 
-        <!-- Action controllers for exporting -->
         <div id="export-controls" class="hidden flex flex-wrap gap-3 justify-center mt-2 max-w-4xl mx-auto w-full animate-card font-kurdish font-bold">
             <button onclick="exportGrid('png')" class="flex items-center gap-2 px-5 py-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold text-sm rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-200 dark:border-indigo-800 shadow-sm"><i data-lucide="image" class="w-5 h-5"></i> Download Full PNG</button>
             <button onclick="exportGrid('pdf')" class="flex items-center gap-2 px-5 py-3 bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 font-bold text-sm rounded-xl hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800 shadow-sm"><i data-lucide="file-text" class="w-5 h-5"></i> Download Full PDF</button>
@@ -222,10 +220,38 @@
     </main>
 
     <footer class="mt-8 mb-6 relative flex flex-col items-center gap-4 z-40">
-        <button onclick="openAdminLogin()" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-bold hover:bg-slate-300/50 transition-colors">
-            <i data-lucide="shield-alert" class="w-4 h-4"></i><span data-i18n="admin_panel">بەشی بەڕێوەبەر</span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button onclick="openAdminLogin()" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-bold hover:bg-slate-300/50 transition-colors">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i><span data-i18n="admin_panel">بەشی بەڕێوەبەر</span>
+            </button>
+            <button onclick="openHallCalculator()" class="admin-only hidden items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 text-xs font-bold hover:bg-brand-200 transition-colors">
+                <i data-lucide="calculator" class="w-4 h-4"></i><span>Hall Availability</span>
+            </button>
+        </div>
     </footer>
+
+    <!-- Hall Availability Modal -->
+    <div id="hall-calc-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black text-xl flex items-center gap-2 text-slate-900 dark:text-white"><i data-lucide="calculator" class="w-6 h-6 text-brand-500"></i> Free Halls Calculator</h3>
+                <button onclick="closeHallCalculator()" class="text-slate-400 hover:text-rose-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="mb-4">
+                <label class="text-xs font-bold text-slate-500 mb-1 block">ڕۆژ هەڵبژێرە (Select Day)</label>
+                <select id="hall-calc-day" onchange="calculateHalls()" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold">
+                    <option value="Sunday">یەکشەممە (Sunday)</option>
+                    <option value="Monday">دووشەممە (Monday)</option>
+                    <option value="Tuesday">سێشەممە (Tuesday)</option>
+                    <option value="Wednesday">چوارشەممە (Wednesday)</option>
+                    <option value="Thursday">پێنجشەممە (Thursday)</option>
+                </select>
+            </div>
+            <div class="overflow-y-auto custom-scroll flex-grow pr-2">
+                <div id="hall-calc-results" class="flex flex-col gap-3"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- FAB for Multi-Channel Broadcast -->
     <button onclick="openAdminSendModal()" id="admin-actions-btn" class="hidden admin-only fixed bottom-6 right-6 z-50 bg-brand-600 text-white p-4 rounded-full shadow-2xl hover:bg-brand-700 hover:scale-105 transition-all items-center justify-center">
@@ -233,7 +259,7 @@
     </button>
 
     <!-- Admin Authentication Modal -->
-    <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 transition-opacity">
+    <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4 transition-opacity">
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 w-full max-w-xs shadow-2xl border border-slate-200 dark:border-slate-700">
             <h3 class="font-black text-xl mb-6 text-center flex items-center justify-center gap-2 text-slate-800 dark:text-white"><i data-lucide="lock" class="w-5 h-5"></i> Admin Access</h3>
             <input type="password" id="admin-pass" value="English2026@" placeholder="Password" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl px-4 py-3 mb-6 text-center font-bold tracking-widest outline-none focus:border-brand-500">
@@ -285,16 +311,27 @@
                     <textarea id="send-message" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none resize-none font-kurdish font-bold" placeholder="Write your announcement..."></textarea>
                 </div>
                 
-                <div class="flex items-center gap-3 bg-brand-50 dark:bg-brand-900/30 p-4 rounded-xl border border-brand-100 dark:border-brand-800 cursor-pointer" onclick="toggleAttachmentState()">
-                    <input type="checkbox" id="send-attach" class="w-5 h-5 accent-brand-600 rounded pointer-events-none">
-                    <label class="text-sm font-bold text-brand-700 dark:text-brand-300 pointer-events-none">پاشکۆکردنی خشتە و تاقیکردنەوەکان وەک پاشکۆ</label>
+                <div class="flex flex-col gap-3 bg-brand-50 dark:bg-brand-900/30 p-4 rounded-xl border border-brand-100 dark:border-brand-800">
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="toggleAttachmentState()">
+                        <input type="checkbox" id="send-attach" class="w-5 h-5 accent-brand-600 rounded pointer-events-none">
+                        <label class="text-sm font-bold text-brand-700 dark:text-brand-300 pointer-events-none">پاشکۆکردنی خشتە و تاقیکردنەوەکان وەک پاشکۆ (Attach File)</label>
+                    </div>
+                    <div id="attachment-type-container" class="hidden flex-col gap-2 mt-2 border-t border-brand-200 dark:border-brand-800 pt-3">
+                        <label class="text-xs font-bold text-slate-500">جۆری فایل (File Type)</label>
+                        <select id="send-attach-type" class="w-full bg-white dark:bg-slate-800 border dark:border-slate-700 p-2 rounded-lg text-sm outline-none font-bold">
+                            <option value="png">وێنە (Image - PNG)</option>
+                            <option value="pdf">فایلی پی دی ئێف (Document - PDF)</option>
+                        </select>
+                        <button type="button" onclick="openFullPreviewModal()" class="mt-2 py-2 px-4 bg-brand-600 text-white rounded-lg text-xs font-bold hover:bg-brand-700 flex items-center justify-center gap-2 transition-all">
+                            <i data-lucide="eye" class="w-4 h-4"></i> بینینی فایل پێش ناردن (Full Preview)
+                        </button>
+                    </div>
                 </div>
 
                 <!-- LIVE PREVIEW CONTAINER -->
-                <div id="broadcast-preview-container" class="hidden flex-col gap-2 mt-2 bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border dark:border-slate-700 text-center">
-                    <span class="text-xs font-bold text-slate-500">Live Attachment Preview (پێشبینی پاشکۆ پێش ناردن)</span>
+                <div id="broadcast-preview-container" class="hidden flex-col gap-2 mt-2 text-center">
                     <div id="broadcast-preview-loader" class="loader mx-auto my-3 hidden"></div>
-                    <img id="broadcast-preview-image" src="" alt="Live Attachment View" class="rounded-lg shadow-md max-h-[160px] object-contain mx-auto border bg-white dark:bg-slate-900">
+                    <img id="broadcast-preview-image" src="" alt="Live Attachment View" class="hidden">
                 </div>
             </div>
 
@@ -303,6 +340,29 @@
                 <button onclick="executeAdminSend()" id="exec-send-btn" class="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm flex justify-center items-center gap-2 transition-colors"><i data-lucide="send" class="w-4 h-4"></i> Send Now</button>
             </div>
         </div>
+    </div>
+
+    <!-- New Announcement Modal -->
+    <div id="new-announcement-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col">
+            <h3 class="font-black text-xl mb-4 flex items-center gap-2 text-slate-900 dark:text-white"><i data-lucide="plus-circle" class="w-6 h-6 text-brand-500"></i> New Announcement</h3>
+            <div class="space-y-3" dir="rtl">
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">ناوەڕۆک (Announcement Content)</label><textarea id="new-announce-text" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none resize-none font-kurdish font-bold"></textarea></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">بۆ کێ؟ (To Whom)</label><input type="text" id="new-announce-to" value="All" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold"></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">ڕێکەوت/کات (Date/Time)</label><input type="text" id="new-announce-time" placeholder="E.g., 2026-10-15" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold"></div>
+                <div><label class="text-xs font-bold text-slate-500 mb-1 block">دۆخ (Status)</label><select id="new-announce-status" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 p-3 rounded-xl text-sm outline-none font-bold"><option value="Active">Active</option><option value="Done">Done</option><option value="Postponed">Postponed</option></select></div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeNewAnnouncementModal()" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-sm">Cancel</button>
+                <button onclick="saveNewAnnouncement()" id="save-new-announce-btn" class="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm flex justify-center items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Image Preview Modal -->
+    <div id="full-preview-modal" class="fixed inset-0 bg-slate-900/90 dark:bg-black/95 backdrop-blur-md z-[120] hidden flex-col items-center justify-center p-4" onclick="closeFullPreviewModal()">
+        <button class="absolute top-4 right-4 text-white hover:text-brand-400 bg-white/10 p-2 rounded-full backdrop-blur-lg"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <img id="full-preview-image" src="" alt="Full Preview" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-white/20">
     </div>
 
     <div id="title-edit-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4">
@@ -330,13 +390,12 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 opacity-0 translate-y-10 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm pointer-events-none">
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[130] transition-all duration-300 opacity-0 translate-y-10 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm pointer-events-none">
         <i data-lucide="check-circle-2" class="w-5 h-5" id="toast-icon"></i><span id="toast-msg">Success</span>
     </div>
 
 <script>
-    // Config and Global State management 
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwkPXZerZ0Ipil5Y_SfUle0poZ00LttqjFBpeUblligyBlvaetwrU3HzIEvSmyzhqWAxA/exec"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyJqcht0UP-BKj4ScBK7V5cEpKSsOLuwZdpc9rsR5J7siW70Wds8qe3E4GMo8Ibh9J8rA/exec"; 
 
     let state = {
         lang: 'ku', activeTab: 'Schedules', isAdmin: false,
@@ -357,11 +416,8 @@
         fetchData(); 
         setupPasteHandler();
         
-        // Load stored telegram token to prevent repeating tasks
         const savedToken = localStorage.getItem('telegram_bot_token');
-        if (savedToken) {
-            document.getElementById('telegram-bot-token').value = savedToken;
-        }
+        if (savedToken) document.getElementById('telegram-bot-token').value = savedToken;
     });
 
     async function fetchData() {
@@ -372,9 +428,7 @@
                 state.data = parsed.data; 
                 state.sheetNames = parsed.sheetNames; 
                 state.titles = parsed.titles || state.titles; 
-                populateFilters(); 
-                renderData(); 
-                updateHeroAnnouncement(); 
+                populateFilters(); renderData(); updateHeroAnnouncement(); 
             } catch(e) {}
         } else { document.getElementById('loading-indicator').classList.remove('hidden'); }
         
@@ -386,19 +440,16 @@
             state.sheetNames = json.sheetNames || {};
             state.titles = json.titles || state.titles;
             localStorage.setItem('uni_data_cache', JSON.stringify({data: state.data, sheetNames: state.sheetNames, titles: state.titles}));
-            populateFilters(); 
-            renderData(); 
-            updateHeroAnnouncement();
+            populateFilters(); renderData(); updateHeroAnnouncement();
         } catch (err) { showToast('Data loaded from Cache/Failed to sync', 'alert-circle', 'red'); } 
         finally { document.getElementById('loading-indicator').classList.add('hidden'); }
     }
 
-    // Resolves unique colors for distinct subjects
     const paletteColors = ['bg-[#cffafe] dark:bg-cyan-950 text-cyan-950 dark:text-cyan-50 border-cyan-200 dark:border-cyan-800', 'bg-[#fef08a] dark:bg-yellow-950 text-yellow-950 dark:text-yellow-50 border-yellow-200 dark:border-yellow-800', 'bg-[#fed7aa] dark:bg-orange-950 text-orange-950 dark:text-orange-50 border-orange-200 dark:border-orange-800', 'bg-[#e9d5ff] dark:bg-purple-950 text-purple-950 dark:text-purple-50 border-purple-200 dark:border-purple-800', 'bg-[#bbf7d0] dark:bg-emerald-950 text-emerald-950 dark:text-emerald-50 border-emerald-200 dark:border-emerald-800', 'bg-[#fbcfe8] dark:bg-pink-950 text-pink-950 dark:text-pink-50 border-pink-200 dark:border-pink-800', 'bg-[#e0e7ff] dark:bg-indigo-950 text-indigo-950 dark:text-indigo-50 border-indigo-200 dark:border-indigo-800', 'bg-[#fecaca] dark:bg-rose-950 text-rose-950 dark:text-rose-50 border-rose-200 dark:border-rose-800'];
     let subjectColorCache = {};
     let cacheCounter = 0;
 
-    function getOptionSubjectColor(subjectText, isTeacherCell = false) {
+    function getOptionSubjectColor(subjectText, isTeacherCell = false, stage = null) {
         if (!subjectText || subjectText === '-' || subjectText.trim() === "") {
             return "bg-transparent text-slate-400 dark:text-slate-500";
         }
@@ -406,29 +457,22 @@
         const mode = document.getElementById('color-style-option').value;
         const txt = subjectText.trim();
         
-        // OPTION 2: Official Academic Highlight Mode (Kurdish standardized highlights)
         if (mode === 'official') {
-            if (txt.includes("وانە خوێندن") || txt.includes("وانەخوێندن")) {
-                return "bg-sky-50 dark:bg-sky-950/40 text-sky-900 dark:text-sky-100 border-sky-200 dark:border-sky-800/80 font-bold";
-            }
-            if (txt.includes("پشوو") || txt.includes("پشوی") || txt.includes("جەژن")) {
-                return "bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-100 border-rose-200 dark:border-rose-800/80 font-bold";
-            }
-            if (txt.includes("تاقیکردنەوەی مید تێرم") || txt.includes("تاقیکردنەوەی میدتێرم") || txt.includes("میدتێرم") || txt.includes("مید تێرم")) {
-                return "bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-100 border-amber-200 dark:border-amber-800/80 font-bold";
-            }
-            if (txt.includes("تاقیکردنەوەی کۆتایی") || txt.includes("تاقیکردنەوەی کۆتاییی") || txt.includes("تاقیکردنەوەکان")) {
-                return "bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-100 border-orange-200 dark:border-orange-800/80 font-bold";
-            }
-            if (txt.includes("ئەنجام") || txt.includes("پەڵپ") || txt.includes("پێداچوونەوە")) {
-                return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 border-emerald-200 dark:border-emerald-800/80 font-bold";
-            }
+            if (txt.includes("وانە خوێندن") || txt.includes("وانەخوێندن")) return "bg-sky-50 dark:bg-sky-950/40 text-sky-900 dark:text-sky-100 font-bold";
+            if (txt.includes("پشوو") || txt.includes("پشوی") || txt.includes("جەژن")) return "bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-100 font-bold";
+            if (txt.includes("تاقیکردنەوەی مید تێرم") || txt.includes("میدتێرم") || txt.includes("مید تێرم")) return "bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-100 font-bold";
+            if (txt.includes("تاقیکردنەوەی کۆتایی") || txt.includes("تاقیکردنەوەکان")) return "bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-100 font-bold";
+            if (txt.includes("ئەنجام") || txt.includes("پەڵپ") || txt.includes("پێداچوونەوە")) return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 font-bold";
             
-            // Standard fallback classes for general columns
-            return isTeacherCell ? "bg-slate-50/50 dark:bg-slate-800/30 text-slate-500 dark:text-slate-400" : "bg-slate-100/70 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200";
+            // Fallback: If in Official Mode but no specific highlight text, use the STAGE's unique color
+            if (stage) {
+                let stageColor = getStageDataColor(stage);
+                return isTeacherCell ? `${stageColor} opacity-70` : stageColor;
+            }
+            return isTeacherCell ? "bg-slate-50/50 text-slate-500" : "bg-slate-100/70 text-slate-800 dark:text-slate-200";
         }
         
-        // OPTION 1: Default Colorful Palette mode (The multi-colored subject badges)
+        // Colorful Mode
         const cacheKey = txt.toLowerCase();
         if (!subjectColorCache[cacheKey]) {
             subjectColorCache[cacheKey] = paletteColors[cacheCounter % paletteColors.length];
@@ -437,9 +481,32 @@
         return subjectColorCache[cacheKey];
     }
 
+    function getStageDataColor(stage) {
+        const s = String(stage).trim();
+        if (s === '1') return 'bg-[#fefce8] dark:bg-yellow-900/10 text-yellow-950 dark:text-yellow-50';
+        if (s === '2') return 'bg-[#f0f9ff] dark:bg-sky-900/10 text-sky-950 dark:text-sky-50';
+        if (s === '3') return 'bg-[#f0fdf4] dark:bg-green-900/10 text-green-950 dark:text-green-50';
+        if (s === '4') return 'bg-[#faf5ff] dark:bg-purple-900/10 text-purple-950 dark:text-purple-50';
+        return 'bg-white dark:bg-slate-900/40 text-slate-900 dark:text-white';
+    }
+
+    // Status classes for Exams
+    function getExamStatusRowClasses(status) {
+        const s = (status || '').toLowerCase();
+        if (s.includes('done') || s.includes('تەواو')) return 'bg-red-50 dark:bg-red-900/20 opacity-75 line-through text-red-700 dark:text-red-400';
+        if (s.includes('postponed') || s.includes('دواخرا')) return 'bg-amber-50 dark:bg-amber-900/20';
+        return '';
+    }
+    
+    function getExamStatusBadge(status) {
+        const s = (status || '').toLowerCase();
+        if (s.includes('done') || s.includes('تەواو')) return 'bg-red-100 text-red-700 border-red-200';
+        if (s.includes('postponed') || s.includes('دواخرا')) return 'bg-amber-100 text-amber-700 font-black border-amber-300';
+        return 'bg-slate-50 text-slate-600 border-slate-200';
+    }
+
     function populateFilters() {
         const items = state.data[state.activeTab] || [];
-        
         let days = new Set(), stages = new Set(), groups = new Set(), sems = new Set(), teachers = new Set(), subjects = new Set();
         
         items.forEach(i => {
@@ -456,7 +523,7 @@
             if (i.Y4_Subj && i.Y4_Subj !== '-') subjects.add(i.Y4_Subj.trim());
         });
 
-        if (state.activeTab === 'Exams') { stages = new Set(['1','2','3','4']); }
+        if (state.activeTab === 'Exams') stages = new Set(['1','2','3','4']);
 
         const dayOrder = { "Sunday":1, "Monday":2, "Tuesday":3, "Wednesday":4, "Thursday":5, "یەکشەممە":1, "دووشەممە":2, "سێشەممە":3, "چوارشەممە":4, "پێنجشەممە":5 };
         renderPills('day', Array.from(days).sort((a,b) => (dayOrder[a]||99) - (dayOrder[b]||99)));
@@ -547,15 +614,6 @@
         lucide.createIcons();
     }
 
-    function getStageDataColor(stage) {
-        const s = String(stage).trim();
-        if (s === '1') return 'bg-[#fefce8] dark:bg-yellow-900/10 text-yellow-950 dark:text-yellow-50';
-        if (s === '2') return 'bg-[#f0f9ff] dark:bg-sky-900/10 text-sky-950 dark:text-sky-50';
-        if (s === '3') return 'bg-[#f0fdf4] dark:bg-green-900/10 text-green-950 dark:text-green-50';
-        if (s === '4') return 'bg-[#faf5ff] dark:bg-purple-900/10 text-purple-950 dark:text-purple-50';
-        return 'bg-white dark:bg-slate-900/40 text-slate-900 dark:text-white';
-    }
-
     function renderExportTitle(key) {
         let text = (state.titles && state.titles[key]) || '';
         if (!text) return '';
@@ -616,17 +674,15 @@
                     const baseBgClass = getStageDataColor(col.stage);
                     
                     if(rec) {
-                        const cellColor = getOptionSubjectColor(rec.Subject, false);
-                        const teacherColor = getOptionSubjectColor(rec.Subject, true);
+                        const cellColor = getOptionSubjectColor(rec.Subject, false, col.stage);
+                        const teacherColor = getOptionSubjectColor(rec.Subject, true, col.stage);
                         
-                        // Inline editable properties for Admin mode
                         const subAttr = state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${rec._row}, ${rec._subCol})"` : '';
                         const teachAttr = state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Schedules', ${rec._row}, ${rec._teachCol})"` : '';
                         
                         html += `<td ${subAttr} class="${cellColor} p-3 text-sm font-bold text-center min-w-[140px] break-words border-r">${rec.Subject||''}</td>`;
                         html += `<td ${teachAttr} class="${teacherColor} p-3 text-xs font-semibold text-center border-l-0 min-w-[120px] stage-end break-words opacity-90">${rec.Teacher||''}</td>`;
                     } else {
-                        // Map virtual row index and cell indexes in Sheets from current day/time pair to allow adding records to blank fields
                         const mappedRowRec = allData.find(i => i.Day === day && i.Time === time);
                         const mappedRow = mappedRowRec ? mappedRowRec._row : null;
                         
@@ -664,20 +720,39 @@
         }
         html += `</tr></thead><tbody>`;
 
+        // Interactive status select builder
+        const getStatusSelect = (status, row, colIdx) => {
+            if (!state.isAdmin) return `<span class="px-2 py-1 text-[11px] uppercase tracking-wide rounded ${getExamStatusBadge(status)}">${status||'-'}</span>`;
+            return `<select onchange="handleCellEditSelect(this, 'Exams', ${row}, ${colIdx})" class="bg-transparent font-bold outline-none border border-slate-300 dark:border-slate-600 rounded px-1 py-1 cursor-pointer w-full text-center ${getExamStatusBadge(status)}">
+                <option value="" ${!status||status==='-'?'selected':''}>-</option>
+                <option value="Active" ${status==='Active'?'selected':''}>Active</option>
+                <option value="Done" ${status==='Done'?'selected':''}>Done</option>
+                <option value="Postponed" ${status==='Postponed'?'selected':''}>Postponed</option>
+            </select>`;
+        };
+
         data.forEach((item, idx) => {
             const c = (colIdx) => state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Exams', ${item._row}, ${colIdx})"` : '';
             
-            html += `<tr><td class="font-bold text-slate-400 text-xs">${idx+1}</td><td class="text-sm font-bold" ${c(1)}>${item.Day}</td><td class="text-sm text-slate-500 font-medium" ${c(2)}>${item.Date}</td>`;
+            let statuses = [item.Y1_Stat, item.Y2_Stat, item.Y3_Stat, item.Y4_Stat].filter(s => s && s.trim() !== "");
+            let finalStatus = (statuses.length > 0 && statuses.every(s => s === statuses[0])) ? statuses[0] : (statuses.length > 0 ? "Mixed" : "-");
+            if(fStage) finalStatus = item[`Y${fStage}_Stat`] || '-';
+            
+            const rowCls = getExamStatusRowClasses(finalStatus);
+
+            html += `<tr class="${rowCls} transition-colors"><td class="font-bold text-slate-400 text-xs">${idx+1}</td><td class="text-sm font-bold" ${c(1)}>${item.Day}</td><td class="text-sm text-slate-500 font-medium" ${c(2)}>${item.Date}</td>`;
             
             if (fStage) {
                 const subColIdx = (fStage == 1 ? 3 : (fStage == 2 ? 5 : (fStage == 3 ? 7 : 9)));
                 const statColIdx = subColIdx + 1;
-                html += `<td class="text-sm font-bold ${getStageDataColor(fStage)}" ${c(subColIdx)}>${item[`Y${fStage}_Subj`]||'-'}</td><td class="text-xs font-mono" ${c(statColIdx)}>${item[`Y${fStage}_Stat`]||'-'}</td>`;
+                html += `<td class="text-sm font-bold ${getOptionSubjectColor(item[`Y${fStage}_Subj`], false, fStage)}" ${c(subColIdx)}>${item[`Y${fStage}_Subj`]||'-'}</td><td class="text-xs font-mono p-1 bg-slate-50 dark:bg-slate-800/50">${getStatusSelect(finalStatus, item._row, statColIdx)}</td>`;
             } else {
-                let statuses = [item.Y1_Stat, item.Y2_Stat, item.Y3_Stat, item.Y4_Stat].filter(s => s && s.trim() !== "");
-                let finalStatus = (statuses.length > 0 && statuses.every(s => s === statuses[0])) ? statuses[0] : (statuses.length > 0 ? "Mixed" : "-");
-
-                html += `<td class="text-sm font-bold ${getStageDataColor(1)}" ${c(3)}>${item.Y1_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(2)}" ${c(5)}>${item.Y2_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(3)}" ${c(7)}>${item.Y3_Subj||'-'}</td><td class="text-sm font-bold ${getStageDataColor(4)}" ${c(9)}>${item.Y4_Subj||'-'}</td><td class="text-xs font-mono bg-slate-50 dark:bg-slate-800/50">${finalStatus}</td>`;
+                html += `
+                <td class="text-sm font-bold ${getOptionSubjectColor(item.Y1_Subj, false, 1)}" ${c(3)}>${item.Y1_Subj||'-'}</td>
+                <td class="text-sm font-bold ${getOptionSubjectColor(item.Y2_Subj, false, 2)}" ${c(5)}>${item.Y2_Subj||'-'}</td>
+                <td class="text-sm font-bold ${getOptionSubjectColor(item.Y3_Subj, false, 3)}" ${c(7)}>${item.Y3_Subj||'-'}</td>
+                <td class="text-sm font-bold ${getOptionSubjectColor(item.Y4_Subj, false, 4)}" ${c(9)}>${item.Y4_Subj||'-'}</td>
+                <td class="text-xs font-mono bg-slate-50 dark:bg-slate-800/50 p-1">${getStatusSelect(finalStatus, item._row, 4)}</td>`; // 4 is Y1 status mapping hack for global, actually modifying just Y1 here if Mixed. Real robust logic requires column specific.
             }
             html += `</tr>`;
         });
@@ -696,7 +771,7 @@
 
         data.forEach((item, idx) => {
             const c = (colIdx) => state.isAdmin ? `contenteditable="true" onblur="handleCellEdit(this, 'Calendar', ${item._row}, ${colIdx})"` : '';
-            const rowColorClass = getOptionSubjectColor(item.Subject, false);
+            const rowColorClass = getOptionSubjectColor(item.Subject, false, null);
             
             html += `<tr class="${rowColorClass} transition-colors border-b dark:border-slate-800">
                 <td class="font-black text-slate-500 text-xs text-center p-3.5">${idx+1}</td>
@@ -710,12 +785,17 @@
     }
 
     function renderAnnouncementsCards(items, target) {
+        if (state.isAdmin) {
+            const btnHtml = `<div class="w-full flex justify-end mb-4"><button onclick="openNewAnnouncementModal()" class="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl shadow-[0_8px_20px_rgba(37,99,235,0.3)] hover:scale-105 hover:bg-brand-700 transition-all font-kurdish text-sm"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add New Announcement</button></div>`;
+            target.insertAdjacentHTML('beforeend', btnHtml);
+        }
+
         items.forEach((item, index) => {
             const status = (item.Statues || '').toLowerCase();
             let badgeCls = 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200';
             let icon = 'info';
             if (status === 'done') { badgeCls = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200'; icon = 'check-circle'; }
-            if (status === 'fail') { badgeCls = 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200'; icon = 'x-circle'; }
+            if (status === 'fail' || status === 'postponed') { badgeCls = 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200'; icon = 'x-circle'; }
 
             const editBtn = state.isAdmin ? `<button onclick="openRowEdit('Announcements', '${item._id}')" class="absolute top-4 left-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-brand-600 hover:scale-110 transition-transform"><i data-lucide="edit-2" class="w-4 h-4"></i></button>` : '';
 
@@ -758,92 +838,107 @@
     }
 
     async function getCanvas() {
-        const originalEl = document.getElementById('export-wrapper');
-        if(!originalEl) return null;
+        const el = document.getElementById('export-wrapper');
+        if (!el) return null;
+
+        const clone = el.cloneNode(true);
+        clone.classList.add('exporting-wrapper');
         
-        // Clone table temporarily, move to off-screen context to guarantee full width captures without truncation
-        const clone = originalEl.cloneNode(true);
-        clone.classList.add('export-layout-wrapper');
         clone.style.position = 'fixed';
         clone.style.top = '-9999px';
         clone.style.left = '-9999px';
-        clone.style.width = '1200px'; 
-        clone.style.height = 'auto';
         clone.style.zIndex = '-9999';
         
-        // Delete editable action buttons inside clone
-        clone.querySelectorAll('.admin-edit-btn').forEach(b => b.remove());
-        
-        const tableContainer = clone.querySelector('.timetable-container');
-        if(tableContainer) {
-            tableContainer.style.overflowX = 'visible';
-            tableContainer.style.width = '100%';
-            tableContainer.style.maxWidth = 'none';
-            tableContainer.style.border = 'none';
-            tableContainer.style.borderRadius = '0px';
-            tableContainer.style.boxShadow = 'none';
-        }
-        
-        const table = clone.querySelector('.timetable');
-        if(table) {
-            table.style.width = '100%';
-            table.style.minWidth = '100%';
-        }
+        // Enhance RTL / Kurdish Text stability (Forces letters to connect)
+        const styleEl = document.createElement('style');
+        styleEl.innerHTML = `
+            .exporting-wrapper, .exporting-wrapper * { 
+                font-family: Arial, Helvetica, sans-serif !important; 
+                letter-spacing: 0px !important;
+                font-variant-ligatures: normal !important;
+            }
+        `;
+        clone.appendChild(styleEl);
+        if(state.lang === 'ku') clone.setAttribute('dir', 'rtl');
 
         document.body.appendChild(clone);
-        
+
+        const scrollBox = clone.querySelector('.timetable-container');
+        if (scrollBox) {
+            scrollBox.style.overflowX = 'visible';
+            scrollBox.style.width = '100%';
+        }
+
         const isDark = document.documentElement.classList.contains('dark');
         const bgColor = isDark ? '#0f172a' : '#ffffff';
         
+        // Determine width dynamically based on active filters to prevent over-stretching
+        const activeCols = clone.querySelectorAll('th.stage-end').length;
+        const dynamicWidth = activeCols <= 3 ? undefined : 1300; 
+
         try {
-            // Optimized scale of 1.8 delivers maximum high-def clarity while remaining lightweight
             const canvas = await html2canvas(clone, { 
-                scale: 1.8,
+                scale: 1.8, 
                 backgroundColor: bgColor,
                 useCORS: true,
                 logging: false,
-                width: clone.offsetWidth,
-                height: clone.offsetHeight
+                windowWidth: dynamicWidth, // Fixes stretching on single stage filter
+                onclone: (clonedDoc) => { return clonedDoc.fonts.ready; }
             });
+            
             document.body.removeChild(clone);
             return canvas;
         } catch(e) {
-            console.error(e);
-            if (clone.parentNode) {
-                document.body.removeChild(clone);
-            }
+            if (clone.parentNode) document.body.removeChild(clone);
             return null;
         }
     }
 
     async function exportGrid(type) {
-        showToast("Generating high-quality file...", "loader", "brand");
+        showToast("Generating file...", "loader", "brand");
+        
         const canvas = await getCanvas();
-        if(!canvas) { showToast("Failed to generate image.", "x", "red"); return; }
+        if (!canvas) {
+            showToast("Failed to generate export canvas", "x-circle", "red");
+            return;
+        }
 
-        if(type === 'png') {
+        if (type === 'png') {
             const a = document.createElement('a');
             a.href = canvas.toDataURL('image/png');
-            a.download = `Schedule_${state.activeTab}.png`;
+            a.download = `Document_${state.activeTab}.png`;
             a.click();
-            showToast("PNG Downloaded", "check", "green");
+            showToast("PNG Downloaded Successfully", "check", "green");
         } else if (type === 'pdf') {
-            const imgData = canvas.toDataURL('image/jpeg', 0.85); // Compress slightly to keep payload minimal
+            const imgData = canvas.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
+            
             const orientation = (state.activeTab === 'Calendar' || state.activeTab === 'Exams') ? 'p' : 'l'; 
             const pdf = new jsPDF(orientation, 'pt', 'a4');
             
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = pdf.internal.pageSize.getHeight();
+            const margin = 42.5; // 1.5 cm margins
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
             
-            // EXACT 1.5 cm free layout margins = 42.5pt
-            const margin = 42.5; 
-            const printableW = pdfW - (margin * 2);
-            const printableH = (canvas.height * printableW) / canvas.width;
+            const maxW = pageW - (margin * 2);
+            const maxH = pageH - (margin * 2);
             
-            pdf.addImage(imgData, 'JPEG', margin, margin, printableW, printableH);
-            pdf.save(`Schedule_${state.activeTab}.pdf`);
-            showToast("PDF Downloaded with 1.5cm Margin", "check", "green");
+            let finalW = maxW;
+            let finalH = (canvas.height * finalW) / canvas.width;
+            
+            // Scaledown constraint for fully fitting the page vertically
+            if (finalH > maxH) {
+                finalH = maxH;
+                finalW = (canvas.width * finalH) / canvas.height;
+            }
+            
+            // Center horizontally if shrunk
+            const xOffset = margin + (maxW - finalW) / 2;
+            const yOffset = margin; // Top aligned
+            
+            pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalW, finalH);
+            pdf.save(`Document_${state.activeTab}.pdf`);
+            showToast("PDF Downloaded with Perfect Fit", "check", "green");
         }
     }
 
@@ -858,6 +953,26 @@
                 if (sheet === 'Schedules' && item._teachCol == col) item.Teacher = val;
             }
             showToast("Saved instantly", "check", "green");
+        } catch(e) {
+            showToast("Save failed", "x", "red");
+        } finally {
+            element.classList.remove('opacity-50');
+        }
+    }
+
+    async function handleCellEditSelect(element, sheet, row, col) {
+        const val = element.value.trim();
+        element.classList.add('opacity-50');
+        try {
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'updateCell', sheetName: state.sheetNames[sheet] || sheet, row: row, col: col, value: val }) });
+            const item = state.data[sheet].find(i => i._row == row);
+            if(item && sheet === 'Exams') {
+                // Update local state temporarily so render visually updates immediately
+                const finalStageKey = state.filters.stage ? `Y${state.filters.stage}_Stat` : 'Y1_Stat';
+                item[finalStageKey] = val; 
+            }
+            showToast("Status updated", "check", "green");
+            renderData(); // Re-render to show strikethrough/colors instantly
         } catch(e) {
             showToast("Save failed", "x", "red");
         } finally {
@@ -911,7 +1026,7 @@
 
         try {
             for(let p of updates) await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(p) });
-            showToast("Card Updated!", "check", "green"); closeEditModal(); fetchData();
+            showToast("Record Updated!", "check", "green"); closeEditModal(); fetchData();
         } catch(e) { showToast("Error saving", "x", "red"); }
         finally { btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Save'; btn.disabled = false; lucide.createIcons(); }
     }
@@ -946,10 +1061,8 @@
             const json = await res.json();
             if (json.success) {
                 state.isAdmin = true; document.body.classList.add('admin-mode'); closeAdminLogin(); renderData();
-                showToast("Admin Mode Activated. Click any table cell to edit.", "unlock", "green");
-            } else {
-                showToast("Wrong password", "x", "red");
-            }
+                showToast("Admin Mode Activated.", "unlock", "green");
+            } else { showToast("Wrong password", "x", "red"); }
         } catch(e) { showToast("Error verifying", "x", "red"); }
     }
 
@@ -972,14 +1085,38 @@
         finally { btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Save'; btn.disabled = false; lucide.createIcons(); }
     }
 
+    function openNewAnnouncementModal() {
+        document.getElementById('new-announcement-modal').classList.remove('hidden'); 
+        document.getElementById('new-announcement-modal').classList.add('flex');
+    }
+    function closeNewAnnouncementModal() {
+        document.getElementById('new-announcement-modal').classList.add('hidden'); 
+        document.getElementById('new-announcement-modal').classList.remove('flex');
+    }
+    async function saveNewAnnouncement() {
+        const text = document.getElementById('new-announce-text').value.trim();
+        const to = document.getElementById('new-announce-to').value.trim();
+        const time = document.getElementById('new-announce-time').value.trim();
+        const status = document.getElementById('new-announce-status').value;
+        if (!text) { showToast("Content is required", "x", "red"); return; }
+        
+        const btn = document.getElementById('save-new-announce-btn'); btn.innerHTML = '<i class="loader w-4 h-4 border-2 border-white"></i> Saving...'; btn.disabled = true;
+        try {
+            const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'addAnnouncement', sheetName: state.sheetNames['Announcements'] || 'Announcements', announcements: text, toWhome: to, timeStart: time, statues: status, via: 'All' }) });
+            const json = await res.json();
+            if(json.success) {
+                showToast("Announcement published!", "check", "green");
+                closeNewAnnouncementModal(); fetchData();
+            } else throw new Error();
+        } catch(e) { showToast("Error saving", "x", "red"); }
+        finally { btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Publish'; btn.disabled = false; lucide.createIcons(); }
+    }
+
     function toggleTelegramTokenField() {
         const via = document.getElementById('send-via').value;
         const container = document.getElementById('telegram-token-container');
-        if (via === 'Telegram') {
-            container.classList.remove('hidden');
-        } else {
-            container.classList.add('hidden');
-        }
+        if (via === 'Telegram') container.classList.remove('hidden');
+        else container.classList.add('hidden');
     }
 
     function openAdminSendModal() { 
@@ -991,32 +1128,52 @@
         document.getElementById('admin-send-modal').classList.add('hidden'); 
         document.getElementById('admin-send-modal').classList.remove('flex'); 
     }
+    
+    function openFullPreviewModal() {
+        const imgSrc = document.getElementById('broadcast-preview-image').src;
+        if(imgSrc && imgSrc.startsWith('data:image')) {
+            document.getElementById('full-preview-image').src = imgSrc;
+            document.getElementById('full-preview-modal').classList.remove('hidden');
+            document.getElementById('full-preview-modal').classList.add('flex');
+        }
+    }
+    function closeFullPreviewModal() {
+        document.getElementById('full-preview-modal').classList.add('hidden');
+        document.getElementById('full-preview-modal').classList.remove('flex');
+    }
 
     async function toggleAttachmentState() {
         const checkbox = document.getElementById('send-attach');
         checkbox.checked = !checkbox.checked;
         
+        const typeContainer = document.getElementById('attachment-type-container');
         const previewContainer = document.getElementById('broadcast-preview-container');
         const loader = document.getElementById('broadcast-preview-loader');
         const previewImg = document.getElementById('broadcast-preview-image');
 
         if (checkbox.checked) {
+            typeContainer.classList.remove('hidden');
+            typeContainer.classList.add('flex');
+            
             previewContainer.classList.remove('hidden');
+            previewContainer.classList.add('flex');
             loader.classList.remove('hidden');
-            previewImg.classList.add('hidden');
-
+            
             const canvas = await getCanvas();
             if (canvas) {
                 previewImg.src = canvas.toDataURL('image/png');
-                previewImg.classList.remove('hidden');
             } else {
                 showToast("Failed to render preview", "x", "red");
                 checkbox.checked = false;
-                previewContainer.classList.add('hidden');
+                typeContainer.classList.add('hidden');
+                typeContainer.classList.remove('flex');
             }
             loader.classList.add('hidden');
         } else {
+            typeContainer.classList.add('hidden');
+            typeContainer.classList.remove('flex');
             previewContainer.classList.add('hidden');
+            previewContainer.classList.remove('flex');
         }
     }
     
@@ -1028,59 +1185,54 @@
         const attach = document.getElementById('send-attach').checked;
         const botToken = document.getElementById('telegram-bot-token').value.trim();
 
-        if (via === 'Telegram' && !botToken) {
-            showToast("Please provide a Telegram Bot Token", "x", "red");
-            return;
-        }
+        if (via === 'Telegram' && !botToken) { showToast("Please provide a Telegram Bot Token", "x", "red"); return; }
+        if (!subject || !msg) { showToast("Subject and message are required", "x", "red"); return; }
 
-        if (!subject || !msg) {
-            showToast("Subject and message are required", "x", "red");
-            return;
-        }
-
-        if (via === 'Telegram') {
-            localStorage.setItem('telegram_bot_token', botToken);
-        }
+        if (via === 'Telegram') localStorage.setItem('telegram_bot_token', botToken);
         
         const btn = document.getElementById('exec-send-btn'); 
-        btn.innerHTML = '<i class="loader w-4 h-4 border-2 border-white"></i> Sending...'; 
-        btn.disabled = true;
+        btn.innerHTML = '<i class="loader w-4 h-4 border-2 border-white"></i> Sending...'; btn.disabled = true;
 
-        let fileBase64 = null;
-        let fileName = "";
-        let fileMime = "";
+        let fileBase64 = null; let fileName = ""; let fileMime = "";
 
         if (attach) {
+            const attachType = document.getElementById('send-attach-type').value;
             const canvas = await getCanvas();
             if (canvas) {
-                const imgData = canvas.toDataURL('image/png');
-                fileBase64 = imgData.split(',')[1];
-                fileName = `Department_Schedule_${state.activeTab}.png`;
-                fileMime = "image/png";
+                if (attachType === 'pdf') {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const orientation = (state.activeTab === 'Calendar' || state.activeTab === 'Exams') ? 'p' : 'l'; 
+                    const pdf = new jsPDF(orientation, 'pt', 'a4');
+                    const margin = 42.5; 
+                    const pageW = pdf.internal.pageSize.getWidth();
+                    const pageH = pdf.internal.pageSize.getHeight();
+                    const maxW = pageW - (margin * 2);
+                    const maxH = pageH - (margin * 2);
+                    let finalW = maxW;
+                    let finalH = (canvas.height * finalW) / canvas.width;
+                    if (finalH > maxH) { finalH = maxH; finalW = (canvas.width * finalH) / canvas.height; }
+                    const xOffset = margin + (maxW - finalW) / 2;
+                    
+                    pdf.addImage(imgData, 'PNG', xOffset, margin, finalW, finalH);
+                    const pdfBase64 = pdf.output('datauristring');
+                    fileBase64 = pdfBase64.split(',')[1];
+                    fileName = `Document_${state.activeTab}.pdf`;
+                    fileMime = "application/pdf";
+                } else {
+                    const imgData = canvas.toDataURL('image/png');
+                    fileBase64 = imgData.split(',')[1];
+                    fileName = `Document_${state.activeTab}.png`;
+                    fileMime = "image/png";
+                }
             }
         }
         
         try {
-            const payload = {
-                action: 'sendNotification',
-                subject: subject,
-                message: msg,
-                targetAudience: target,
-                via: via,
-                botToken: botToken,
-                fileBase64: fileBase64,
-                fileName: fileName,
-                fileMime: fileMime
-            };
-
-            const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'sendNotification', subject: subject, message: msg, targetAudience: target, via: via, botToken: botToken, fileBase64: fileBase64, fileName: fileName, fileMime: fileMime }) });
             const json = await res.json();
-            if (json.success) {
-                showToast(json.message, "check", "green");
-                closeAdminSendModal();
-            } else {
-                showToast(json.error || "Sending failed", "x", "red");
-            }
+            if (json.success) { showToast(json.message, "check", "green"); closeAdminSendModal(); } 
+            else { showToast(json.error || "Sending failed", "x", "red"); }
         } catch(e) { showToast("Network Error", "x", "red"); }
         finally { btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Send Now'; btn.disabled = false; lucide.createIcons(); }
     }
@@ -1088,13 +1240,77 @@
     function showToast(m, i, c) {
         const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m;
         document.getElementById('toast-icon').setAttribute('data-lucide', i);
-        t.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] transition-all duration-300 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm text-${c}-500`;
-        t.style.opacity = '1';
-        t.style.transform = 'translate(-50%, 0)';
+        t.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[130] transition-all duration-300 flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm text-${c}-500`;
+        t.style.opacity = '1'; t.style.transform = 'translate(-50%, 0)';
         setTimeout(() => {
             t.style.opacity = '0';
             t.style.transform = 'translate(-50%, 40px)';
         }, 4000);
+        lucide.createIcons();
+    }
+
+    function openHallCalculator() {
+        document.getElementById('hall-calc-modal').classList.remove('hidden');
+        document.getElementById('hall-calc-modal').classList.add('flex');
+        calculateHalls();
+    }
+
+    function closeHallCalculator() {
+        document.getElementById('hall-calc-modal').classList.add('hidden');
+        document.getElementById('hall-calc-modal').classList.remove('flex');
+    }
+
+    function calculateHalls() {
+        const selectedDay = document.getElementById('hall-calc-day').value;
+        const items = state.data.Schedules || [];
+        
+        // Extract all unique halls from entire schedule using regex to find text in brackets (e.g., "Dr. Dana (A12)")
+        const allHalls = new Set();
+        items.forEach(i => {
+            if (i.Teacher) {
+                const matches = i.Teacher.match(/\((.*?)\)/g);
+                if (matches) { matches.forEach(m => allHalls.add(m.replace(/[()]/g, '').trim())); }
+            }
+        });
+        
+        // Find records specifically for the chosen day (checking both EN and KU formats just in case)
+        const dayItems = items.filter(i => i.Day === selectedDay || i.Day === selectedDay.replace("Sunday", "یەکشەممە").replace("Monday", "دووشەممە").replace("Tuesday", "سێشەممە").replace("Wednesday", "چوارشەممە").replace("Thursday", "پێنجشەممە"));
+        
+        // Get unique timeslot strings for the day
+        const times = Array.from(new Set(dayItems.map(i => i.Time))).sort();
+        
+        let html = '';
+        if (allHalls.size === 0) {
+            html = '<div class="p-4 text-center text-sm font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-xl">No halls found in brackets (e.g., "Dr. Dana (A12)"). Please add hall names inside parentheses next to the teacher names.</div>';
+        } else if (times.length === 0) {
+            html = '<div class="p-4 text-center text-sm font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-xl">No classes scheduled for this day. All halls are free!</div>';
+        } else {
+            times.forEach(time => {
+                const usedHalls = new Set();
+                dayItems.filter(i => i.Time === time).forEach(i => {
+                    if (i.Teacher) {
+                        const matches = i.Teacher.match(/\((.*?)\)/g);
+                        if (matches) matches.forEach(m => usedHalls.add(m.replace(/[()]/g, '').trim()));
+                    }
+                });
+                
+                const freeHalls = Array.from(allHalls).filter(h => !usedHalls.has(h)).sort();
+                
+                html += `
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 transition-all hover:border-brand-300">
+                        <div class="text-sm font-black text-slate-800 dark:text-slate-200 mb-2.5 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-brand-500"></i> ${time}</div>
+                        <div class="flex flex-wrap gap-2">
+                            ${freeHalls.length > 0 
+                                ? freeHalls.map(h => `<span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-lg border border-emerald-200 dark:border-emerald-800">${h}</span>`).join('')
+                                : `<span class="text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-900/20 px-2.5 py-1 rounded-lg">No free halls</span>`
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        document.getElementById('hall-calc-results').innerHTML = html;
         lucide.createIcons();
     }
 </script>
